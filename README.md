@@ -17,8 +17,8 @@ Get basic dev environment set up so we can build things.
   - [X] Add authentication SDK
 ### Lobby setup
 - [ ] Host screen
-  - [ ] Create host screen page
-  - [ ] Button to create lobby
+  - [X] Create host screen page
+  - [X] Button to create lobby
   - [ ] Display room code
   - [ ] Display joined players
   - [ ] Display VIP player

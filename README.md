@@ -9,8 +9,8 @@ Get basic dev environment set up so we can build things.
   - [X] Install jQuery
   - [X] Set up Github Pages
 - [ ] Set up Firebase
-  - [ ] Create app in Firebase
-  - [ ] Initialize in repo
+  - [X] Create app in Firebase
+  - [X] Initialize in repo
 ### Lobby setup
 - [ ] Host screen
   - [ ] Create host screen page

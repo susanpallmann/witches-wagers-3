@@ -10,16 +10,6 @@ function writeData() {
 
 function signInAnon() {
   const auth = getAuth();
-  signInAnonymously(auth)
-  .then(() => {
-    // Signed in..
-    console.log('signed in successfully');
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // ...
-  });
   setPersistence(auth, browserSessionPersistence)
   .then(() => {
     // Existing and future Auth states are now persisted in the current

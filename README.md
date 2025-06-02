@@ -37,3 +37,7 @@
 - [ ] Player won
 - [ ] Game canceled
 - [ ] Settings menu
+- [ ] Game look & feel
+  - [ ] Design
+  - [ ] Build
+- [ ] Illustrations for players, monsters, items, and backgrounds

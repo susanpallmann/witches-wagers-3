@@ -9,10 +9,7 @@ function writeData() {
 }
 
 function signInAnon() {
-  const auth = getAuth()
-  .setCustomUserClaims(uid, { hostScreen: true })
-  .then(() => {
-  });
+  const auth = getAuth();
   
   signInAnonymously(auth)
     .then(() => {
@@ -29,6 +26,9 @@ function signInAnon() {
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/auth.user
       const uid = user.uid;
+      auth.setCustomUserClaims(uid, { hostScreen: true })
+      .then(() => {
+      });
       console.log(uid);
       // ...
     } else {

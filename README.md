@@ -18,7 +18,7 @@ Get basic dev environment set up so we can build things.
 ### Lobby setup
 - [ ] Host screen
   - [X] Create host screen page
-  - [X] Button to create lobby
+  - [ ] Button to create lobby
   - [ ] Display room code
   - [ ] Display joined players
   - [ ] Display VIP player

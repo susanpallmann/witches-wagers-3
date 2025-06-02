@@ -68,7 +68,7 @@ let signInAnon = new Promise(function(onSuccess, onFail) {
 
 $(document).ready(function () {
   signInAnon.then(
-    writeData(uid),
-    sendErrorMessage(errorCode, errorMessage) { console.log(errorCode + ': ' + errorMessage)}
+    function(uid) {writeData(uid);},
+    function(errorCode, errorMessage) { console.log(errorCode + ': ' + errorMessage);}
   );
 });

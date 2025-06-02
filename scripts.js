@@ -1,7 +1,8 @@
 // Scripts will go here
 $(document).ready(function () {
   function writeData() {
-    firebase.database().ref('test').set({
+    var database = firebase.database();
+    database.ref('test').set({
     hello: "world"
     });
   }

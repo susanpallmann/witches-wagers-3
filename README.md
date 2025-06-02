@@ -2,12 +2,12 @@
 ## Initiatives
 ### Environment setup
 Get basic dev environment set up so we can build things.
-- [ ] Set up repository for work
-  - [ ] Build index.html
-  - [ ] Build styles.css
-  - [ ] Build scripts.js
-  - [ ] Install jQuery
-  - [ ] Set up Github Pages
+- [X] Set up repository for work
+  - [X] Build index.html
+  - [X] Build styles.css
+  - [X] Build scripts.js
+  - [X] Install jQuery
+  - [X] Set up Github Pages
 - [ ] Set up Firebase
   - [ ] Create app in Firebase
   - [ ] Initialize in repo

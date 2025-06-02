@@ -33,6 +33,7 @@ function signInAnon() {
     // ...
   }
 }
+}
 
 $(document).ready(function () {
   writeData();

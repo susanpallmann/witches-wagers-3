@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstat
 
 function writeData(uid) {
   const db = getDatabase();
-  set(ref(db, 'Rooms/TEST/players/' + uid), {
+  set(ref(db, 'rooms/TEST/players/' + uid), {
     test: 'test'
   });
 }

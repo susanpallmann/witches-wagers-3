@@ -28,6 +28,7 @@ function signInAnon() {
       // https://firebase.google.com/docs/reference/js/auth.user
       const uid = user.uid;
       console.log('user is signed in');
+      return (user.uid);
       // ...
     } else {
       // User is signed out
@@ -35,9 +36,38 @@ function signInAnon() {
     }
   });
 }
+let signInAnon = new Promise(function(onSuccess, onFail) {
+  const auth = getAuth();
+  
+  signInAnonymously(auth)
+    .then(() => {
+      // Signed in..
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      onFail(errorCode, errorMessage);
+      // ...
+    });
+  
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/auth.user
+      const uid = user.uid;
+      console.log('user is signed in');
+      onSuccess(uid);
+      // ...
+    } else {
+      // User is signed out
+      // ...
+    }
+  });
+});
 
 $(document).ready(function () {
-  let uid = signInAnon();
-  console.log(uid);
-  writeData(uid);
+  signInAnon.then(
+    writeData(uid),
+    sendErrorMessage(errorCode, errorMessage) { console.log(errorCode + ': ' + errorMessage)}
+  );
 });

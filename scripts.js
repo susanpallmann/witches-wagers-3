@@ -1,4 +1,3 @@
-// Scripts will go here
 import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
   
 function writeData() {

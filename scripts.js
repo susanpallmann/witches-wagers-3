@@ -14,6 +14,7 @@ function signInAnon() {
   signInAnonymously(auth)
     .then(() => {
       // Signed in..
+      
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -26,10 +27,7 @@ function signInAnon() {
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/auth.user
       const uid = user.uid;
-      setCustomUserClaims(uid, { hostScreen: true })
-      .then(() => {
-      });
-      console.log(uid);
+      console.log('user is signed in');
       // ...
     } else {
       // User is signed out

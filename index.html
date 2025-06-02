@@ -6,16 +6,17 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <script type="module">
-      // Firebase
-      import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js'
-
-      // Firebase products
-      import { getAuth } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js'
-      import { } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js'
-
-      // Config
-      const firebaseConfig = {
+     <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js"></script>
+    
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+    https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js"></script>
+    
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
         apiKey: "AIzaSyBJbi00ewTbZL-sVopebM1IJSx4TZ8gk-k",
         authDomain: "witches-wagers-3.firebaseapp.com",
         projectId: "witches-wagers-3",
@@ -24,15 +25,9 @@
         appId: "1:910229219485:web:b9d57f18ac20a0b4908c74",
         databaseURL: "https://witches-wagers-3-default-rtdb.firebaseio.com",
       };
-  
+      
       // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-  
-      // Initialize Realtime Database and get a reference to the service
-      const database = app.database();
-  
-      // Initialize Firebase Authentication and get a reference to the service
-      const auth = getAuth(app);
+      firebase.initializeApp(firebaseConfig);
     </script>
     <script type="text/javascript" src="scripts.js"></script>
   </head>

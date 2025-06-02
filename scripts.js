@@ -3,40 +3,11 @@ import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstat
 
 function writeData(uid) {
   const db = getDatabase();
-  set(ref(db, 'rooms/TEST/players/' + uid), {
-    test: 'test'
+  set(ref(db, 'rooms/TEST/'), {
+    host: uid'
   });
 }
-/*
-function signInAnon() {
-  const auth = getAuth();
-  
-  signInAnonymously(auth)
-    .then(() => {
-      // Signed in..
-      return (user.uid);
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // ...
-    });
-  
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/auth.user
-      const uid = user.uid;
-      console.log('user is signed in');
-      return (user.uid);
-      // ...
-    } else {
-      // User is signed out
-      // ...
-    }
-  });
-}
-*/
+
 let signInAnon = new Promise(function(onSuccess, onFail) {
   const auth = getAuth();
   

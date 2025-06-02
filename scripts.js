@@ -1,9 +1,9 @@
 import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
 import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
 
-function writeData() {
+function writeData(uid) {
   const db = getDatabase();
-  set(ref(db, 'test'), {
+  set(ref(db, 'TEST/players/' + uid), {
     test: 'test'
   });
 }
@@ -14,7 +14,7 @@ function signInAnon() {
   signInAnonymously(auth)
     .then(() => {
       // Signed in..
-      
+      return (user.uid);
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -37,6 +37,6 @@ function signInAnon() {
 }
 
 $(document).ready(function () {
-  writeData();
-  signInAnon();
+  let uid = signInAnon();
+  writeData(uid);
 });

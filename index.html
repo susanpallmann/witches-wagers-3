@@ -5,23 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-
-      // TODO: Add SDKs for Firebase products that you want to use
-      // https://firebase.google.com/docs/web/setup#available-libraries
-      import firebase from "firebase/app";
-      import "firebase/compat/database";
-      import "firebase/compat/auth";
-
-      // Initialize Realtime Database and get a reference to the service
-      const database = firebase.database();
-      
-      // Initialize Firebase Authentication and get a reference to the service
-      const auth = firebase.auth();
-
-      // Your web app's Firebase configuration
+      import { initializeApp } from "firebase/app";
+      import { getDatabase } from "firebase/database";
+  
+      // TODO: Replace the following with your app's Firebase project configuration
+      // See: https://firebase.google.com/docs/web/learn-more#config-object
       const firebaseConfig = {
         apiKey: "AIzaSyBJbi00ewTbZL-sVopebM1IJSx4TZ8gk-k",
         authDomain: "witches-wagers-3.firebaseapp.com",
@@ -31,9 +21,15 @@
         appId: "1:910229219485:web:b9d57f18ac20a0b4908c74",
         databaseURL: "https://witches-wagers-3-default-rtdb.firebaseio.com",
       };
-
+  
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
+  
+      // Initialize Realtime Database and get a reference to the service
+      const database = getDatabase(app);
+  
+      // Initialize Firebase Authentication and get a reference to the service
+      const auth = firebase.auth();
     </script>
     <script type="text/javascript" src="scripts.js"></script>
   </head>

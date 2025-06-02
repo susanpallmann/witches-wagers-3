@@ -9,7 +9,10 @@ function writeData() {
 }
 
 function signInAnon() {
-  const auth = getAuth();
+  const auth = getAuth()
+  .setCustomUserClaims(uid, { hostScreen: true })
+  .then(() => {
+  });
   
   signInAnonymously(auth)
     .then(() => {
@@ -32,7 +35,7 @@ function signInAnon() {
       // User is signed out
       // ...
     }
-  }
+  });
 }
 
 $(document).ready(function () {

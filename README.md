@@ -13,6 +13,8 @@ Get basic dev environment set up so we can build things.
   - [X] Initialize in repo
   - [X] Set up realtime database
   - [X] Add realtime database SDK
+  - [ ] Set up authentication
+  - [ ] Add authentication SDK
 ### Lobby setup
 - [ ] Host screen
   - [ ] Create host screen page

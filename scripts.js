@@ -2,7 +2,6 @@ import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebase
 import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
 
 function writeData(uid) {
-  let uid = uid;
   const db = getDatabase();
   set(ref(db, 'Rooms/TEST/players/' + uid), {
     test: 'test'

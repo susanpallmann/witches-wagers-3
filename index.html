@@ -7,9 +7,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script type="module">
-      import { initializeApp } from "firebase/app";
-      import { getDatabase } from "firebase/database";
-      import { getAuth } from "firebase/auth";
+      import firebase from "firebase/compat/app";
+      import "firebase/compat/auth";
+      import "firebase/compat/database";
   
       // TODO: Replace the following with your app's Firebase project configuration
       // See: https://firebase.google.com/docs/web/learn-more#config-object
@@ -27,10 +27,10 @@
       const app = initializeApp(firebaseConfig);
   
       // Initialize Realtime Database and get a reference to the service
-      const database = getDatabase(app);
+      const database = firebase.database();
   
       // Initialize Firebase Authentication and get a reference to the service
-      const auth = getAuth(app);
+      const auth = firebase.auth();
     </script>
     <script type="text/javascript" src="scripts.js"></script>
   </head>

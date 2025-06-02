@@ -9,9 +9,14 @@
   <body>
     <main>
       <h1>Host screen</h1>
-    </main>
-    <script type="module">
+      <p>Room code: <span id="room-code">Not generated yet</span></p>
+      <div class="button">Create lobby</div>
 
+      <div id="players-list"></div>
+    </main>
+    
+    
+    <script type="module">
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
       // TODO: Add SDKs for Firebase products that you want to use

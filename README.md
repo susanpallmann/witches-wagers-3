@@ -1,5 +1,8 @@
 # witches-wagers-3
 ## Initiatives
+### Environment setup
+- [ ] Set up repository for work
+- [ ] Set up firebase
 ### Lobby setup
 - [ ] Host screen
   - [ ] Create host screen page

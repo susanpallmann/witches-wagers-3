@@ -7,7 +7,7 @@ function writeData(uid) {
     test: 'test'
   });
 }
-
+/*
 function signInAnon() {
   const auth = getAuth();
   
@@ -36,6 +36,7 @@ function signInAnon() {
     }
   });
 }
+*/
 let signInAnon = new Promise(function(onSuccess, onFail) {
   const auth = getAuth();
   

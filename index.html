@@ -7,12 +7,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script type="module">
-      import firebase from "firebase/compat/app";
-      import "firebase/compat/auth";
-      import "firebase/compat/database";
-  
-      // TODO: Replace the following with your app's Firebase project configuration
-      // See: https://firebase.google.com/docs/web/learn-more#config-object
+      // Firebase
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js'
+
+      // Firebase products
+      import { getAuth } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js'
+      import { getDatabase } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database-compat.js'
+
+      // Config
       const firebaseConfig = {
         apiKey: "AIzaSyBJbi00ewTbZL-sVopebM1IJSx4TZ8gk-k",
         authDomain: "witches-wagers-3.firebaseapp.com",
@@ -27,10 +29,10 @@
       const app = initializeApp(firebaseConfig);
   
       // Initialize Realtime Database and get a reference to the service
-      const database = firebase.database();
+      const database = getDatabase(app);
   
       // Initialize Firebase Authentication and get a reference to the service
-      const auth = firebase.auth();
+      const auth = getAuth(app);
     </script>
     <script type="text/javascript" src="scripts.js"></script>
   </head>

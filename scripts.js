@@ -9,10 +9,7 @@ function writeData() {
 }
 
 function signInAnon() {
-  const auth = getAuth()
-  .setCustomUserClaims(uid, { hostScreen: true })
-  .then(() => {
-  });
+  const auth = getAuth();
   
   signInAnonymously(auth)
     .then(() => {

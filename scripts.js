@@ -1,8 +1,9 @@
 // Scripts will go here
 $(document).ready(function () {
   function writeData() {
-    app.database().ref('users/' + 'test').set({
-      test: "test"
+    const db = getDatabase();
+    set(ref(db, 'test'), {
+      test: 'test'
     });
   }
   writeData();

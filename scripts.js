@@ -1,5 +1,5 @@
 import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
-import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
+import { getAuth, onAuthStateChanged, signInAnonymously, setCustomUserClaims} from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
 
 function writeData() {
   const db = getDatabase();
@@ -10,7 +10,9 @@ function writeData() {
 
 function signInAnon() {
   const auth = getAuth();
+  
   signInAnonymously(auth)
+    .setCustomUserClaims(uid, { hostScreen: true })
     .then(() => {
       // Signed in..
     })

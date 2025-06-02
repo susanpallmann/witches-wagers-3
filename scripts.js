@@ -9,10 +9,12 @@ function writeData() {
 }
 
 function signInAnon() {
-  const auth = getAuth();
+  const auth = getAuth()
+  .setCustomUserClaims(uid, { hostScreen: true })
+  .then(() => {
+  }
   
   signInAnonymously(auth)
-    .setCustomUserClaims(uid, { hostScreen: true })
     .then(() => {
       // Signed in..
     })
@@ -21,6 +23,7 @@ function signInAnon() {
       const errorMessage = error.message;
       // ...
     });
+  
   onAuthStateChanged(auth, (user) => {
     if (user) {
       // User is signed in, see docs for a list of available properties

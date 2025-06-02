@@ -12,7 +12,7 @@ function signInAnon() {
   const auth = getAuth()
   .setCustomUserClaims(uid, { hostScreen: true })
   .then(() => {
-  }
+  });
   
   signInAnonymously(auth)
     .then(() => {

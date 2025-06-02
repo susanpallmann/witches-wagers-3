@@ -8,13 +8,13 @@ Get basic dev environment set up so we can build things.
   - [X] Build scripts.js
   - [X] Install jQuery
   - [X] Set up Github Pages
-- [ ] Set up Firebase
+- [X] Set up Firebase
   - [X] Create app in Firebase
   - [X] Initialize in repo
   - [X] Set up realtime database in Firebase
-  - [ ] Add realtime database SDK
+  - [X] Add realtime database SDK
   - [X] Set up authentication in Firebase
-  - [ ] Add authentication SDK
+  - [X] Add authentication SDK
 ### Lobby setup
 - [ ] Host screen
   - [ ] Create host screen page

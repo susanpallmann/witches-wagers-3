@@ -11,6 +11,8 @@ Get basic dev environment set up so we can build things.
 - [ ] Set up Firebase
   - [X] Create app in Firebase
   - [X] Initialize in repo
+  - [X] Set up realtime database
+  - [X] Add realtime database SDK
 ### Lobby setup
 - [ ] Host screen
   - [ ] Create host screen page

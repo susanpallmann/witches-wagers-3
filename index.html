@@ -12,7 +12,7 @@
 
       // Firebase products
       import { getAuth } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js'
-      import { getDatabase } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database-compat.js'
+      import { } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js'
 
       // Config
       const firebaseConfig = {
@@ -29,7 +29,7 @@
       const app = initializeApp(firebaseConfig);
   
       // Initialize Realtime Database and get a reference to the service
-      const database = getDatabase(app);
+      const database = app.database();
   
       // Initialize Firebase Authentication and get a reference to the service
       const auth = getAuth(app);

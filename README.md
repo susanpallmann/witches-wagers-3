@@ -1,8 +1,16 @@
 # witches-wagers-3
 ## Initiatives
 ### Environment setup
+Get basic dev environment set up so we can build things.
 - [ ] Set up repository for work
-- [ ] Set up firebase
+  - [ ] Build index.html
+  - [ ] Build styles.css
+  - [ ] Build scripts.js
+  - [ ] Install jQuery
+  - [ ] Set up Github Pages
+- [ ] Set up Firebase
+  - [ ] Create app in Firebase
+  - [ ] Initialize in repo
 ### Lobby setup
 - [ ] Host screen
   - [ ] Create host screen page

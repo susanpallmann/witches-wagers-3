@@ -37,6 +37,7 @@ function reverifyUsers(users) {
   let unverified = users;
   let verified = [];
   unverified.forEach((user) => {
+    console.log(user);
     let userRef = ref(db, `rooms/TEST/connection/users/${user}`);
     let updates = {};
     updates['verificationStatus'] = 'pending';

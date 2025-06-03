@@ -1,4 +1,4 @@
-import { getDatabase, ref, get, child, set, onValue } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
+import { getDatabase, ref, get, child, set, onValue, push, update } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
 import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
 
 const verificationCadence = 60000;
@@ -23,18 +23,26 @@ let getUnverifiedUsers = new Promise(function(returnUsers) {
     snapshot.forEach((childSnapshot) => {
       //console.log(childSnapshot.key); 
       if (childSnapshot.val().lastVerified <= timeStamp - verificationCadence) {
-        console.log(childSnapshot.val().lastVerified);
-        console.log('this record is old');
         users.push(childSnapshot.key);
       } else {
-        console.log(childSnapshot.val().lastVerified);
-        console.log('this record is new');
       }
     });
     returnUsers(users);
   });
 });
 
+function reverifyUsers(users) {
+  const db = getDatabase();
+  const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
+  let unverified = users;
+  let verified = [];
+  unverified.forEach((user) => {
+    let userRef = ref(db, `rooms/TEST/connection/users/${user}`);
+    let updates = {};
+    updates['verificationStatus'] = 'pending';
+    update(ref(userRef), updates);
+  });
+}
 // 
 
 $(document).ready(function () {
@@ -43,6 +51,7 @@ $(document).ready(function () {
   getUnverifiedUsers.then(
     function(users) {
       console.log(users);
+      reverifyUsers(users);
     }
   );
 });

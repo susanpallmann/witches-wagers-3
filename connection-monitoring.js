@@ -21,7 +21,7 @@ function getUnverifiedUsers() {
   get(connectedUsersRef).then((snapshot) => {
     snapshot.forEach((childSnapshot) => {
       //console.log(childSnapshot.key); 
-      if (childSnapshot.lastVerified <= timeStamp + verificationCadence) {
+      if (childSnapshot.lastVerified <= timeStamp - verificationCadence) {
         console.log('this record is old');
       } else {
         console.log('this record is new');

@@ -113,7 +113,7 @@ Firebase realtime database:
 
 #### Functions:
 - getUnverified()
-- verifyUsers(users)
+- reverifyUsers(users)
 - handleResponse(status)
 - handleDisconnect(user)
 - evaluateVIP(user)

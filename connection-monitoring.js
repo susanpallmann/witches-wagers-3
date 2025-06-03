@@ -16,14 +16,11 @@ function connectionCodeListener() {
 
 function getUnverifiedUsers() {
   const db = getDatabase();
-  get(child(db, `rooms/TEST/connection/users/${userId}`)).then((snapshot) => {
-    if (snapshot.exists()) {
-      console.log(snapshot.val());
-    } else {
-      console.log('data does not exist.');
-    }
-  }).catch((error) => {
-    console.error(error);
+  const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
+  get(connectedUsersRef, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      console.log(childSnapshot.key); 
+    });
   });
 }
 

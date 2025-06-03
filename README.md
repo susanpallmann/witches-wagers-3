@@ -94,6 +94,14 @@ Host:
 Firebase realtime database:
 - rooms:
   - $room_code
+    - connection
+      - connectionCode: <>,
+      - Users:
+        - $user_id
+          - lastVerified: timestamp,
+          - requests:
+            - $user_id2:
+              - verificationStatus: <>
 - allowedValues:
   - connectionCodes:
     - allConnected: TRUE,

@@ -33,7 +33,7 @@ let getUnverifiedUsers = new Promise(function(returnUsers) {
     });
     returnUsers(users);
   });
-}
+});
 
 // 
 

@@ -1,4 +1,4 @@
-import { getDatabase, ref, get, set, onValue } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
+import { getDatabase, ref, get, child, set, onValue } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
 import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
 
 const verificationCadence = 60000;

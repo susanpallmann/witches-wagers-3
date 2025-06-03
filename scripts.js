@@ -43,7 +43,7 @@ let signInAnon = new Promise(function(onSuccess, onFail) {
 function generateRoomCode() {
   const letters = 'BCDFGHJKLMNPQRSTVWXYZ';
   const roomCodeLength = 4;
-  let roomCode;
+  let roomCode = '';
   for (let i = 0; i < roomCodeLength; i++) {
     roomCode = roomCode + letters.split('')[(Math.floor(Math.random() * letters.length()))]
   }  

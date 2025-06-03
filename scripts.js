@@ -41,10 +41,11 @@ let signInAnon = new Promise(function(onSuccess, onFail) {
 // End experiments
 
 function generateRoomCode() {
-  const ASCIIModifier = 65;
-  let roomCode = "";
-  for (i = 0; i < 4; i++) {
-    roomCode = roomCode + String.fromCharCode(Math.floor(Math.random() * 26) + ASCIIModifier)
+  const letters = 'BCDFGHJKLMNPQRSTVWXYZ';
+  const roomCodeLength = 4;
+  let roomCode;
+  for (i = 0; i < roomCodeLength; i++) {
+    roomCode = roomCode + letters.split('')[(Math.floor(Math.random() * letters.length()))]
   }  
   console.log(roomCode);
 }

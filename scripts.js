@@ -38,9 +38,21 @@ let signInAnon = new Promise(function(onSuccess, onFail) {
   });
 });
 
+// End experiments
+
+function generateRoomCode() {
+  const ASCIIModifier = 65;
+  let roomCode = "";
+  for (i = 0; i < 4; i++) {
+    roomCode = roomCode + String.fromCharCode(Math.floor(Math.random() * 26) + ASCIIModifier)
+  }  
+  console.log(roomCode);
+}
+
 $(document).ready(function () {
-  signInAnon.then(
-    function(uid) {writeData(uid);},
-    function(errorCode, errorMessage) { console.log(errorCode + ': ' + errorMessage);}
-  );
+  //signInAnon.then(
+  //  function(uid) {writeData(uid);},
+  //  function(errorCode, errorMessage) { console.log(errorCode + ': ' + errorMessage);}
+  //);
+  generateRoomCode();
 });

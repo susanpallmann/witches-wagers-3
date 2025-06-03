@@ -39,10 +39,20 @@ function reverifyUsers(users) {
   unverified.forEach((user) => {
     console.log(user);
     let userRef = ref(db, `rooms/TEST/connection/users/${user}`);
+    console.log(userRef);
     let updates = {};
     updates['verificationStatus'] = 'pending';
     console.log(updates);
-    set(ref(userRef), updates);
+    set(ref(db, `rooms/TEST/connection/users/${user}/verificationStatus`), 'pending');
+  });
+}
+
+
+function writeData(uid) {
+  const db = getDatabase();
+  console.log(uid);
+  set(ref(db, 'rooms/TEST'), {
+    host: uid
   });
 }
 // 

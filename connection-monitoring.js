@@ -14,7 +14,7 @@ function connectionCodeListener() {
   });
 }
 
-function getUnverifiedUsers() {
+let getUnverifiedUsers = new Promise(function(returnUsers) {
   const db = getDatabase();
   const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
   const timeStamp = Date.now();
@@ -31,7 +31,7 @@ function getUnverifiedUsers() {
         console.log('this record is new');
       }
     });
-    return users;
+    returnUsers(users);
   });
 }
 
@@ -41,4 +41,9 @@ $(document).ready(function () {
   //connectionCodeListener();
   //getUnverifiedUsers();
   console.log(getUnverifiedUsers());
+  getUnverifiedUsers.then(
+    function(users) {
+      console.log(users);
+    }
+  );
 });

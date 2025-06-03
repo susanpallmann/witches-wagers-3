@@ -17,14 +17,23 @@ function connectionCodeListener() {
 function getUnverifiedUsers() {
   const db = getDatabase();
   const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
+  const timeStamp = Date.now();
   get(connectedUsersRef).then((snapshot) => {
     snapshot.forEach((childSnapshot) => {
-      console.log(childSnapshot.key); 
+      //console.log(childSnapshot.key); 
+      if (childSnapshot.lastVerified <= timeStamp + verificationCadence) {
+        console.log('this record is old');
+      } else {
+        console.log('this record is new');
+      }
     });
   });
 }
 
+// 
+
 $(document).ready(function () {
-  connectionCodeListener();
+  //connectionCodeListener();
+  //getUnverifiedUsers();
   getUnverifiedUsers();
 });

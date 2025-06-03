@@ -31,21 +31,16 @@ let getUnverifiedUsers = new Promise(function(returnUsers) {
   });
 });
 
-function reverifyUsers(users) {
+let reverifyUsers new Promise(function(users) {
   const db = getDatabase();
   const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
   let unverified = users;
   let verified = [];
   unverified.forEach((user) => {
-    console.log(user);
     let userRef = ref(db, `rooms/TEST/connection/users/${user}`);
-    console.log(userRef);
-    let updates = {};
-    updates['verificationStatus'] = 'pending';
-    console.log(updates);
-    set(ref(db, `rooms/TEST/connection/users/${user}/verificationStatus`), 'pending');
+    set(ref(userRef, '/verificationStatus`), 'pending');
   });
-}
+});
 
 
 function writeData(uid) {

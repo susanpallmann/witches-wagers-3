@@ -40,7 +40,6 @@ let getUnverifiedUsers = new Promise(function(returnUsers) {
 $(document).ready(function () {
   //connectionCodeListener();
   //getUnverifiedUsers();
-  console.log(getUnverifiedUsers());
   getUnverifiedUsers.then(
     function(users) {
       console.log(users);

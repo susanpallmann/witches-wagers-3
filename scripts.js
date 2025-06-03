@@ -6,7 +6,7 @@ function writeData(uid) {
   console.log(uid);
   set(ref(db, 'rooms/TEST'), {
     //host: uid
-    test: uid
+    test: 'test'
   });
 }
 

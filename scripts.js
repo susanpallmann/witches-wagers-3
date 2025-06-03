@@ -28,7 +28,6 @@ let signInAnon = new Promise(function(onSuccess, onFail) {
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/auth.user
       const uid = user.uid;
-      console.log('user is signed in');
       onSuccess(uid);
       // ...
     } else {
@@ -40,15 +39,30 @@ let signInAnon = new Promise(function(onSuccess, onFail) {
 
 // End experiments
 
+// Simple function to generate and return a room code from a list of allowed letters.
 function generateRoomCode() {
-  const letters = 'BCDFGHJKLMNPQRSTVWXYZ';
-  const roomCodeLength = 4;
-  let roomCode = '';
+  
+  const letters = 'BCDFGHJKLMNPQRSTVWXYZ'; // Allowed letters. Vowels are omitted to reduce the likelihood of accidentally generating real words.
+  const roomCodeLength = 4; // Determines how many characters long the generated room code will be.
+
+  let roomCode = ''; // Initialize an empty room code variable.
+
+  // Choose a random letter from the allowed letters and add it to the room code until room code is desired length.
   for (let i = 0; i < roomCodeLength; i++) {
     roomCode = roomCode + letters.split('')[(Math.floor(Math.random() * letters.length))]
-  }  
-  console.log(roomCode);
+  }
+
+  // Return room code when loop is complete.
+  return roomCode;
 }
+
+// Function to authenticate user upon page load, and then show UI once authentication succeeded
+
+// Function to create lobby upon button press
+// Create room code
+// Check if room code exists already
+// If so, create room code again
+// If not, set up room, assign host
 
 $(document).ready(function () {
   //signInAnon.then(

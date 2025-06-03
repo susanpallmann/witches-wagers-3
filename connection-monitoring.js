@@ -31,7 +31,7 @@ let getUnverifiedUsers = new Promise(function(returnUsers) {
   });
 });
 
-let reverifyUsers new Promise(function(users, allDone) {
+let reverifyUsers = new Promise(function(users, allDone) {
   const db = getDatabase();
   const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
   let unverified = users;

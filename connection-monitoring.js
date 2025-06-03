@@ -37,7 +37,9 @@ function reverifyUsers (users) {
   let unverified = users;
   let verified = [];
   unverified.forEach((user) => {
+    let timestamp = Date.now();
     set(ref(db, `rooms/TEST/connection/users/${user}`), {
+      lastVerified: timestamp,
       verificationStatus: 'pending'
     })
       .then(() => {

@@ -118,6 +118,7 @@ Firebase realtime database:
 - handleDisconnect(user)
 - evaluateVIP(user)
 - removePlayer(guest)
-- endGame(errorType)
 - updateVerifyTimestamp(user)
 - connectionCodeListener()
+- handleConnectionCode(connectionCode)
+- endGame(connectionCode)

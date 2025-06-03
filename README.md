@@ -62,3 +62,54 @@ Get basic dev environment set up so we can build things.
 - [ ] Design
 - [ ] Build
 - [ ] Illustrations for players, monsters, items, and backgrounds
+
+## "Modules"
+### Game lobby
+Lobby:
+  - Generate room code
+  - Validate room code (repeat, reset, create)
+    - Check if room code exists
+      - If so, check if room is old
+        - If so, call reset lobby (new host)
+        - If not, generate new room code, and repeat
+      - If not, create lobby
+- Create lobby
+- Reset lobby (same host)
+- Reset lobby (new host)
+- Delete lobby
+
+Host:
+- Authenticate host
+
+### Connection monitoring:
+#### Constants:
+- **verificationCadence** - how often a user must be verified for connection status
+- **minimumGuests** - how many guests are required for the game to be playable
+
+#### Stored allowed values:
+- **connectionCodes** - allConnected, hostDisconnect, notEnoughPlayers
+- **verificationStatus** - pending, confirmed
+
+#### Database structure
+Firebase realtime database:
+- rooms:
+  - $room_code
+- allowedValues:
+  - connectionCodes:
+    - allConnected: TRUE,
+    - hostDisconnect: TRUE,
+    - notEnoughPlayers: TRUE
+  - verificationStatus:
+    - pending: TRUE,
+    - confirmed: TRUE
+
+#### Functions:
+- getUnverified()
+- verifyUsers(users)
+- handleResponse(status)
+- handleDisconnect(user)
+- evaluateVIP(user)
+- removePlayer(guest)
+- endGame(errorType)
+- updateVerifyTimestamp(user)
+- connectionCodeListener()

@@ -31,7 +31,7 @@ let getUnverifiedUsers = new Promise(function(returnUsers) {
   });
 });
 
-let reverifyUsers = new Promise(function(users, allDone) {
+function reverifyUsers = (users) {
   const db = getDatabase();
   const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
   let unverified = users;
@@ -41,13 +41,12 @@ let reverifyUsers = new Promise(function(users, allDone) {
     set(ref(db, userRef), {'verificationStatus': 'pending'})
       .then(() => {
         console.log('updated status');
+        verified.push(user);
       })
       .catch((error) => {
     });
   });
-  allDone();
 });
-
 
 function writeData(uid) {
   const db = getDatabase();
@@ -67,10 +66,7 @@ $(document).ready(function () {
   getUnverifiedUsers.then(
     function(users) {
       console.log(users);
-      reverifyUsers(users).then(
-        users,
-        function(){console.log('all done');}
-      );
+      reverifyUsers(users);
     }
   );
 });

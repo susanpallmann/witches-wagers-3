@@ -1,4 +1,4 @@
-import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
+import { getDatabase, ref, get, set, onValue } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
 import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
 
 const verificationCadence = 60000;
@@ -14,6 +14,20 @@ function connectionCodeListener() {
   });
 }
 
+function getUnverifiedUsers() {
+  const db = getDatabase();
+  get(child(db, 'rooms/TEST/connection/users')).then((snapshot) => {
+    if (snapshot.exists()) {
+      console.log(snapshot.val());
+    } else {
+      console.log('data does not exist.');
+    }
+  }).catch((error) => {
+    console.error(error);
+  });
+}
+
 $(document).ready(function () {
   connectionCodeListener();
+  getUnverifiedUsers();
 });

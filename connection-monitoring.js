@@ -41,6 +41,7 @@ function reverifyUsers(users) {
     let userRef = ref(db, `rooms/TEST/connection/users/${user}`);
     let updates = {};
     updates['verificationStatus'] = 'pending';
+    console.log(updates);
     update(ref(userRef), updates);
   });
 }

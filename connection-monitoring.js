@@ -31,15 +31,21 @@ let getUnverifiedUsers = new Promise(function(returnUsers) {
   });
 });
 
-let reverifyUsers new Promise(function(users) {
+let reverifyUsers new Promise(function(users, allDone) {
   const db = getDatabase();
   const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
   let unverified = users;
   let verified = [];
   unverified.forEach((user) => {
     let userRef = ref(db, `rooms/TEST/connection/users/${user}`);
-    set(ref(userRef, '/verificationStatus`), 'pending');
+    set(ref(db, userRef), {'verificationStatus': 'pending'})
+      .then(() => {
+        console.log('updated status');
+      })
+      .catch((error) => {
+    });
   });
+  allDone();
 });
 
 
@@ -48,6 +54,9 @@ function writeData(uid) {
   console.log(uid);
   set(ref(db, 'rooms/TEST'), {
     host: uid
+  }).then(() => {
+  })
+  .catch((error) => {
   });
 }
 // 
@@ -58,7 +67,10 @@ $(document).ready(function () {
   getUnverifiedUsers.then(
     function(users) {
       console.log(users);
-      reverifyUsers(users);
+      reverifyUsers(users).then(
+        users,
+        function(){console.log('all done');}
+      );
     }
   );
 });

@@ -17,7 +17,7 @@ function connectionCodeListener() {
 function getUnverifiedUsers() {
   const db = getDatabase();
   const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
-  get(connectedUsersRef, (snapshot) => {
+  get(connectedUsersRef).then((snapshot) => {
     snapshot.forEach((childSnapshot) => {
       console.log(childSnapshot.key); 
     });

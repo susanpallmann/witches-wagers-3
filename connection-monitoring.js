@@ -42,7 +42,7 @@ function reverifyUsers(users) {
     let updates = {};
     updates['verificationStatus'] = 'pending';
     console.log(updates);
-    update(ref(userRef), updates);
+    set(ref(userRef), updates);
   });
 }
 // 

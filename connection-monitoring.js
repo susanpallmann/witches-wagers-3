@@ -8,7 +8,6 @@ let connectionCode;
 function connectionCodeListener() {
   const db = getDatabase();
   const connectionCodeRef = ref(db, 'rooms/TEST/connection/connectionCode');
-  console.log(connectionCodeRef.val());
   onValue(connectionCodeRef, (snapshot) => {
     connectionCode = snapshot.val();
     // Do something whenever this code changes.

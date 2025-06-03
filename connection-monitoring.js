@@ -16,7 +16,7 @@ function connectionCodeListener() {
 
 function getUnverifiedUsers() {
   const db = getDatabase();
-  get(child(db, 'rooms/TEST/connection/users')).then((snapshot) => {
+  get(child(db, `rooms/TEST/connection/users/${userId}`)).then((snapshot) => {
     if (snapshot.exists()) {
       console.log(snapshot.val());
     } else {

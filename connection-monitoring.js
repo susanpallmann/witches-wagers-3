@@ -59,7 +59,7 @@ $(document).ready(function () {
     function(code, users) {
       console.log(`code sent: ${code}`);
     }
-    );
+  );
 });
 
 /*

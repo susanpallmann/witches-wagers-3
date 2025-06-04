@@ -6,9 +6,8 @@ const minimumGuests = 1;
 
 function removeGuests(guests) {
   const db = getDatabase();
-  const roomRef = ref(db, 'rooms/TEST');
   for (let guest in guests) {
-    set(ref(roomRef, `connection/users/${guest}`), null).then(() => {
+    set(ref(db, `rooms/TEST/connection/users/${guest}`), null).then(() => {
       return true;
     }).catch((error) => {
       console.log('removeGuests: ' + error);

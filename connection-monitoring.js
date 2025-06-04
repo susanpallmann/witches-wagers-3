@@ -48,9 +48,41 @@ function reverifyUsers (users) {
       })
       .catch((error) => {
     });
-  }).then(() => {
-    console.log(verified);
   });
+}
+
+function verifyUser(db, user, timestamp) {
+  return new Promise(resolve => {
+    set(ref(db, `rooms/TEST/connection/users/${user}`), {
+      lastVerified: timestamp,
+      verificationStatus: 'pending'
+    })
+      .then(() => {
+        console.log('updated status');
+        resolve(user);
+      })
+      .catch((error) => {
+    });
+  });
+}
+
+async function setPendingStatus(users) {
+  const db = getDatabase();
+  const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
+  let unverified = users;
+  let verified = [];
+  for (let user of users) {
+    let timestamp = Date.now();
+    let verifiedUser = await verifyUser(db, user, timestamp);
+    console.log('user is ' + user);
+    console.log('verifiedUser is ' + verifiedUser);
+    if (user == verifiedUser) {
+      verified.push(user);
+    } else {
+      console.log('something went wrong');
+    }
+  }
+  console.log(verified);
 }
 
 function writeData(uid) {

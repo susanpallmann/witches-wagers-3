@@ -9,7 +9,7 @@ function removeGuests(guests) {
     const db = getDatabase();
     for (let guest in guests) {
       set(ref(db, `rooms/TEST/connection/users/${guest}`), {
-        null: null;
+        null: null
       }).then(() => {
         resolve(true);
       }).catch((error) => {

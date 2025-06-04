@@ -26,6 +26,9 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
   const timestamp = Date.now();
   
   get(connectionRef).then((snapshot) => {
+    console.log(snapshot);
+    console.log(snapshot.val());
+    console.log(snapshot.host.val());
     let hostUser = snapshot.val().host;
     let allUsers = snapshot.val().users;
     console.log(hostUser);

@@ -29,14 +29,12 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
     let hostUser = snapshot.val().host;
     let allUsers = snapshot.val().users;
     console.log(allUsers);
-    console.log(allUsers.val());
     let totalUsers = 0;
     let unresponsiveGuests = [];
     for (let user in allUsers) {
       console.log(user);
-      console.log(user.val());
-      console.log(user.lastVerified);
-      if (user.val().lastVerified  <= timestamp - verificationCadence) {
+      console.log(user['lastVerified']);
+      if (user['lastVerified']  <= timestamp - verificationCadence) {
         if (user.key === hostUser) {
           missingCheckIn('hostDisconnect', null);
         } else {

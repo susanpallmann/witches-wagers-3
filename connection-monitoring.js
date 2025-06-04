@@ -48,8 +48,9 @@ function reverifyUsers (users) {
       })
       .catch((error) => {
     });
+  }).then(() => {
+    console.log(verified);
   });
-  console.log(verified);
 }
 
 function writeData(uid) {

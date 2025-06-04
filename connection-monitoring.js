@@ -16,16 +16,18 @@ function removeGuests(guests) {
 }
 
 function updateConnectionStatus(code) {
-  const db = getDatabase();
-  update(ref(db, 'rooms/TEST/connection'), {
-    connectionStatus: code
-  })
-  .then(() => {
-    return true;
-  })
-  .catch((error) => {
-    console.log('updateConnectionStatus: ' + error);
-    return false;
+  return new Promise(resolve => {
+    const db = getDatabase();
+    update(ref(db, 'rooms/TEST/connection'), {
+      connectionStatus: code
+    })
+    .then(() => {
+      resolve(true);
+    })
+    .catch((error) => {
+      console.log('updateConnectionStatus: ' + error);
+      resolve(false);
+    });
   });
 }
 

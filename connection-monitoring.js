@@ -68,24 +68,7 @@ function verifyUser(db, user, timestamp) {
   });
 }
 
-async function setPendingStatus(users) {
-  const db = getDatabase();
-  const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
-  let unverified = users;
-  let verified = [];
-  for (let user of users) {
-    let timestamp = Date.now();
-    let verifiedUser = await verifyUser(db, user, timestamp);
-    console.log('user is ' + user);
-    console.log('verifiedUser is ' + verifiedUser);
-    if (user == verifiedUser) {
-      verified.push(user);
-    } else {
-      console.log('something went wrong');
-    }
-  }
-  console.log(verified);
-}
+
 
 function writeData(uid) {
   const db = getDatabase();
@@ -99,13 +82,118 @@ function writeData(uid) {
 }
 // 
 
+function setConnectionCode (code) {
+  const db = getDatabase();
+  let connectionRef = ref(db, 'rooms/TEST/connection');
+  let codeUpdate = {};
+  codeUpdate['connectionCode'] = code;
+  update(ref(connectionRef), codeUpdate);
+}
+
+function updateVerificationTimestamp () {
+  const db = getDatabase();
+  let connectionRef = ref(db, 'rooms/TEST/connection');
+  let newTimestamp = {};
+  newTimestamp['lastVerified'] = Date.now();
+  update(ref(connectionRef), newTimestamp);
+}
+
+function removeGuests (guests) {
+  updateVerificationTimestamp ();
+}
+
+function handleUnresponsiveUsers (snapshot, unresponsiveUsers) {
+  return new Promise( function (setConnectionCode, removeGuests) {
+    let hostUser = snapshot.val().host;
+    if (unresponsiveUsers.includes(hostUser) {
+      setConnectionCode ('hostDisconnect');
+    } else {
+      let users = snapshot.val().users;
+      let numGuests = Number(users.length) - 1;
+      if (numGuests - users.length < minimumGuests) {
+        setConnectionCode ('notEnoughPlayers');
+      } else {
+        removeGuests (unresponsiveUsers);
+      }
+    }
+  });
+});
+
+async function getUsersWithStatus(snapshot, status) {
+  let users = [];
+  for (let childSnapshot of snapshot) {
+    if (childSnapshot.val().verificationStatus === status) {
+      users.push(childSnapshot.key);
+    } else {
+    }
+  }
+  return users;
+  });
+}
+
+function checkVerificationStatus (snapshot) {
+  return new Promise ( function (handleUnresponsiveUsers, updateVerificationTimestamp) {
+    let hasPending = [];
+    let hasConfirmed = [];
+    hasPending = await getUsersWithStatus (snapshot, 'pending');
+    hasConfirmed = await getUsersWithStatus (snapshot, 'confirmed');
+    if (hasPending.length < 1) {
+      updateVerificationTimestamp ();
+    } else {
+      handleUnresponsiveUsers (snapshot, hasPending);
+    }
+  });
+}
+
+function getVerificationTimestamp () {
+  return new Promise(function (checkVerificationStatus, recentlyVerified) {
+    const db = getDatabase();
+    const connectionRef = ref(db, 'rooms/TEST/connection');
+    const timeStamp = Date.now();
+    get(connectionRef).then((snapshot) => {
+        if (snapshot.val().lastVerified <= timeStamp - verificationCadence) {
+          checkVerificationStatus(snapshot);
+        } else {
+          recentlyVerified ();
+        }
+    });
+  });
+}
+
 $(document).ready(function () {
   //connectionCodeListener();
   //getUnverifiedUsers();
-  getUnverifiedUsers.then(
-    function(users) {
-      console.log(users);
-      setPendingStatus(users);
+  //getUnverifiedUsers.then(
+  //  function(users) {
+  //    console.log(users);
+  //    setPendingStatus(users);
+  //  }
+  //);
+  getVerificationTimestamp ().then(
+    function () {
+      console.log('Verification needed');
+      checkVerificationStatus (snapshot).then(
+        function () {
+          console.log('Unresponsive users found');
+          handleUnresponsiveUsers (snapshot, unresponsiveUsers).then(
+            function () {
+              console.log('Game-ending condition from disconnect');
+              setConnectionCode (code);
+            },
+            function () {
+              console.log('Game can continue after player(s) are removed');
+              removeGuests (guests);
+            }
+          );
+        },
+        function () {
+          console.log('All users responded');
+          updateVerificationTimestamp ();
+        }
+      );
+    },
+    function () {
+      console.log('No verification needed');
     }
   );
 });

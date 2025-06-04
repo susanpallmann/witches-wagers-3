@@ -33,31 +33,33 @@ function updateConnectionStatus(code) {
 
 
 async function missingCheckIn(code, users) {
-  if (code === 'hostDisconnect' || code === 'notEnoughGuests') {
-    let updateSuccessful = await updateConnectionStatus(code);
-    if (updateSuccessful) {
-      console.log('missingCheckIn: Updated connectionStatus to ' + code + ' successfully.');
-      return true;
-    } else {
-      console.log('missingCheckIn: Unable to update connectionStatus to ' + code);
-      return false;
-    }
-  } else if (code === 'removeGuest') {
-    if (users !== null) {
-      // Remove each guest
-      let updateSuccessful = await removeGuests(users);
+  return new Promise(resolve => {
+    if (code === 'hostDisconnect' || code === 'notEnoughGuests') {
+      let updateSuccessful = await updateConnectionStatus(code);
       if (updateSuccessful) {
-        console.log('missingCheckIn: Removed disconnected guests ' + users.join(', ') + ' successfully.');
-        return true;
+        console.log('missingCheckIn: Updated connectionStatus to ' + code + ' successfully.');
+        resolve(true);
+      } else {
+        console.log('missingCheckIn: Unable to update connectionStatus to ' + code);
+        resolve(false);
+      }
+    } else if (code === 'removeGuest') {
+      if (users !== null) {
+        // Remove each guest
+        let updateSuccessful = await removeGuests(users);
+        if (updateSuccessful) {
+          console.log('missingCheckIn: Removed disconnected guests ' + users.join(', ') + ' successfully.');
+          resolve(true);
+        }
+      } else {
+        console.log('missingCheckIn: Missing required parameter: users.');
+        resolve(false);
       }
     } else {
-      console.log('missingCheckIn: Missing required parameter: users.');
-      return false;
+      console.log('missingCheckIn: Unrecognized parameter: code.');
+      resolve(false);
     }
-  } else {
-    console.log('missingCheckIn: Unrecognized parameter: code.');
-    return false;
-  }
+  });
 }
 
 let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {

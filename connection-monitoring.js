@@ -28,7 +28,7 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
   get(connectionRef).then((snapshot) => {
     let hostUser = snapshot.val().host;
     let allUsers = snapshot.val().users;
-    console.log(allUsers);
+    console.log(hostUser);
     let totalUsers = 0;
     let unresponsiveGuests = [];
     for (let user in allUsers) {

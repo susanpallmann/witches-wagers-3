@@ -33,16 +33,7 @@ function updateConnectionStatus(code) {
 }
 
 async function missingCheckIn(code, users) {
-  if (code === 'hostDisconnect') {
-    let updateSuccessful = await updateConnectionStatus(code);
-    if (updateSuccessful) {
-      console.log('missingCheckIn: Updated connectionStatus to ' + code + ' successfully.');
-      return true;
-    } else {
-      console.log('missingCheckIn: Unable to update connectionStatus to ' + code);
-      return false;
-    }
-  } else if (code === 'notEnoughGuests') {
+  if (code === 'hostDisconnect' || code === 'notEnoughGuests') {
     let updateSuccessful = await updateConnectionStatus(code);
     if (updateSuccessful) {
       console.log('missingCheckIn: Updated connectionStatus to ' + code + ' successfully.');

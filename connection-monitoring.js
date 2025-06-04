@@ -31,6 +31,7 @@ let getUnverifiedUsers = new Promise(function(returnUsers) {
   });
 });
 
+/*
 function reverifyUsers (users) {
   const db = getDatabase();
   const connectedUsersRef = ref(db, 'rooms/TEST/connection/users');
@@ -50,6 +51,7 @@ function reverifyUsers (users) {
     });
   });
 }
+*/
 
 function verifyUser(db, user, timestamp) {
   return new Promise(resolve => {
@@ -103,7 +105,7 @@ $(document).ready(function () {
   getUnverifiedUsers.then(
     function(users) {
       console.log(users);
-      reverifyUsers(users);
+      setPendingStatus(users);
     }
   );
 });

@@ -2,7 +2,7 @@ import { getDatabase, ref, get, child, set, onValue, push, update } from 'https:
 import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
 
 const verificationCadence = 60000;
-const minimumGuests = 0;
+const minimumGuests = 1;
 
 async function missingCheckIn(code, users) {
   if (code === 'hostDisconnect') {

@@ -57,7 +57,7 @@ $(document).ready(function () {
       console.log('all users checked in recently');
     },
     function(code, users) {
-      console.log(users.join(', ') + ` haven't checked in recently.`);
+      console.log(`code sent: ${code}`);
     }
     );
 });

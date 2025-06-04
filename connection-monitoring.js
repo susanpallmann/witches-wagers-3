@@ -38,7 +38,7 @@ function updateConnectionStatus(code) {
 
 
 async function missingCheckIn(code, users) {
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
     if (code === 'hostDisconnect' || code === 'notEnoughGuests') {
       let updateSuccessful = await updateConnectionStatus(code);
       if (updateSuccessful) {

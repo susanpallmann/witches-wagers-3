@@ -4,19 +4,68 @@ import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstat
 const verificationCadence = 60000;
 const minimumGuests = 1;
 
+function removeGuests(guests) {
+  const db = getDatabase();
+  const roomRef = ref(db, 'rooms/TEST');
+  for (let guest in guests) {
+    set(ref(roomRef, `connection/users/${guest}`), null).then(() => {
+      return true;
+    }).catch((error) => {
+      console.log('removeGuests: ' + error);
+    });
+  }
+}
+
+function updateConnectionStatus(code) {
+  const db = getDatabase();
+  const connectionRef = ref(db, 'rooms/TEST/connection');
+  let codeUpdate = {
+    connectionStatus: code
+  };
+  update(connectionRef, codeUpdate)
+  .then(() => {
+    return true;
+  })
+  .catch((error) => {
+    console.log('updateConnectionStatus: ' + error);
+    return false;
+  });
+}
+
 async function missingCheckIn(code, users) {
   if (code === 'hostDisconnect') {
-    // Update connection status
+    let updateSuccessful = await updateConnectionStatus(code);
+    if (updateSuccessful) {
+      console.log('missingCheckIn: Updated connectionStatus to ' + code + ' successfully.');
+      return true;
+    } else {
+      console.log('missingCheckIn: Unable to update connectionStatus to ' + code);
+      return false;
+    }
   } else if (code === 'notEnoughGuests') {
-    // Update connection status
+    let updateSuccessful = await updateConnectionStatus(code);
+    if (updateSuccessful) {
+      console.log('missingCheckIn: Updated connectionStatus to ' + code + ' successfully.');
+      return true;
+    } else {
+      console.log('missingCheckIn: Unable to update connectionStatus to ' + code);
+      return false;
+    }
   } else if (code === 'removeGuest') {
     if (users !== null) {
       // Remove each guest
+      let updateSuccessful = await removeGuests(users);
+      if (updateSuccessful) {
+        console.log('missingCheckIn: Removed disconnected guests ' + users.join(', ') + ' successfully.');
+        return true;
+      }
     } else {
       console.log('missingCheckIn: Missing required parameter: users.');
+      return false;
     }
   } else {
     console.log('missingCheckIn: Unrecognized parameter: code.');
+    return false;
   }
 }
 
@@ -28,7 +77,6 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
   get(connectionRef).then((snapshot) => {
     let hostUser = snapshot.val().host;
     let allUsers = snapshot.val().users;
-    console.log(hostUser);
     let totalUsers = 0;
     let unresponsiveGuests = [];
     for (let user in allUsers) {
@@ -58,6 +106,12 @@ $(document).ready(function () {
     },
     function(code, users) {
       console.log(`code sent: ${code}`);
+      let handleMissingCheckIn = await missingCheckIn(code, users);
+      if (handleMissingCheckIn) {
+        console.log('Document ready: Missing check in was handled successfully.')
+      } else {
+        console.log('Document ready: Missing check in could not be handled.')
+      }
     }
   );
 });

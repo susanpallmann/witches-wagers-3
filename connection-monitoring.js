@@ -6,9 +6,9 @@ const minimumGuests = 1;
 
 async function missingCheckIn(code, users) {
   if (code === 'hostDisconnect') {
-    // Update connection code
+    // Update connection status
   } else if (code === 'notEnoughGuests') {
-    // Update connection code
+    // Update connection status
   } else if (code === 'removeGuest') {
     if (users !== null) {
       // Remove each guest

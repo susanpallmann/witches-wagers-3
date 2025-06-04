@@ -97,6 +97,7 @@ Firebase realtime database:
     - connection
       - connectionCode: <>,
       - lastVerified: timestamp,
+      - host: uid,
       - Users:
         - $user_id
           - verificationStatus: <>

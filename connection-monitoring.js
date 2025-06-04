@@ -4,7 +4,21 @@ import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstat
 const verificationCadence = 60000;
 const minimumGuests = 0;
 
-
+async function missingCheckIn(code, users) {
+  if (code === 'hostDisconnect') {
+    // Update connection code
+  } else if (code === 'notEnoughGuests') {
+    // Update connection code
+  } else if (code === 'removeGuest') {
+    if (users !== null) {
+      // Remove each guest
+    } else {
+      console.log('missingCheckIn: Missing required parameter: users.');
+    }
+  } else {
+    console.log('missingCheckIn: Unrecognized parameter: code.');
+  }
+}
 
 async function getCheckIns() {
   return new Promise(function(allUsersCheckedIn, missingCheckIn) {
@@ -30,9 +44,9 @@ async function getCheckIns() {
       if (unresponsiveGuests.length < 1) {
         allUsersCHeckedIn();
       } else if (totalUsers - unresponsiveGuests.length - 1 < minimumGuests) {
-        missingCheckIn('notEnoughPlayers', null);
+        missingCheckIn('notEnoughGuests', null);
       } else {
-        missingCheckIn('removePlayer', unresponsiveGuests);
+        missingCheckIn('removeGuest', unresponsiveGuests);
       }
     });
   });

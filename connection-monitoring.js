@@ -2,9 +2,54 @@ import { getDatabase, ref, get, child, set, onValue, push, update } from 'https:
 import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
 
 const verificationCadence = 60000;
-const minimumGuests = 2;
-let connectionCode;
+const minimumGuests = 0;
 
+
+
+async function getCheckIns() {
+  return new Promise(function(allUsersCheckedIn, missingCheckIn) {
+    const db = getDatabase();
+    const connectionRef = ref(db, 'rooms/TEST/connection');
+    const timestamp = Date.now();
+    
+    get(connectionRef).then((snapshot) => {
+      let hostUser = snapshot.val().host;
+      let allUsers = snapshot.val().users;
+      let totalUsers = 0;
+      let unresponsiveGuests = [];
+      for (user in allUsers) {
+        if (user.val().lastVerified  <= timestamp - verificationCadence) {
+          if (user.key === hostUser) {
+            missingCheckIn('hostDisconnect', null);
+          } else {
+            unresponsiveGuests.push(user.key);
+          }
+        }
+        totalUsers++;
+      }
+      if (unresponsiveGuests.length < 1) {
+        allUsersCHeckedIn();
+      } else if (totalUsers - unresponsiveGuests.length - 1 < minimumGuests) {
+        missingCheckIn('notEnoughPlayers', null);
+      } else {
+        missingCheckIn('removePlayer', unresponsiveGuests);
+      }
+    });
+  });
+}
+
+$(document).ready(function () {
+  getCheckins().then(
+    function() {
+      console.log('all users checked in recently');
+    },
+    function(code, users) {
+      console.log(users.join(', ') + ` haven't checked in recently.`);
+    }
+    );
+});
+
+/*
 function connectionCodeListener() {
   const db = getDatabase();
   const connectionCodeRef = ref(db, 'rooms/TEST/connection/connectionCode');
@@ -51,7 +96,7 @@ function reverifyUsers (users) {
     });
   });
 }
-*/
+
 
 function verifyUser(db, user, timestamp) {
   return new Promise(resolve => {
@@ -200,3 +245,4 @@ $(document).ready(function () {
     }
   );
 });
+*/

@@ -160,6 +160,9 @@ function getVerificationTimestamp () {
   });
 }
 
+let checkVerification = new Promise(function() {
+});
+
 $(document).ready(function () {
   //connectionCodeListener();
   //getUnverifiedUsers();

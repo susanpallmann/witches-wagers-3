@@ -95,7 +95,7 @@ $(document).ready(function () {
     function() {
       console.log('all users checked in recently');
     },
-    function(code, users) {
+    async function(code, users) {
       console.log(`code sent: ${code}`);
       let handleMissingCheckIn = await missingCheckIn(code, users);
       if (handleMissingCheckIn) {

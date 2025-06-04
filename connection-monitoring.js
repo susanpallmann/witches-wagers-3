@@ -51,7 +51,7 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
 });
 
 $(document).ready(function () {
-  getCheckins().then(
+  getCheckIns().then(
     function() {
       console.log('all users checked in recently');
     },

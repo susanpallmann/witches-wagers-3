@@ -32,14 +32,11 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
     let totalUsers = 0;
     let unresponsiveGuests = [];
     for (let user in allUsers) {
-      console.log(user);
-      console.log(allUsers[user].key);
-      console.log(allUsers[user].lastVerified);
-      if (user.lastVerified  <= timestamp - verificationCadence) {
-        if (user.key === hostUser) {
+      if (allUsers[user].lastVerified  <= timestamp - verificationCadence) {
+        if (user === hostUser) {
           missingCheckIn('hostDisconnect', null);
         } else {
-          unresponsiveGuests.push(user.key);
+          unresponsiveGuests.push(user);
         }
       }
       totalUsers++;

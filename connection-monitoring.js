@@ -20,37 +20,35 @@ async function missingCheckIn(code, users) {
   }
 }
 
-async function getCheckIns() {
-  return new Promise(function(allUsersCheckedIn, missingCheckIn) {
-    const db = getDatabase();
-    const connectionRef = ref(db, 'rooms/TEST/connection');
-    const timestamp = Date.now();
-    
-    get(connectionRef).then((snapshot) => {
-      let hostUser = snapshot.val().host;
-      let allUsers = snapshot.val().users;
-      let totalUsers = 0;
-      let unresponsiveGuests = [];
-      for (user in allUsers) {
-        if (user.val().lastVerified  <= timestamp - verificationCadence) {
-          if (user.key === hostUser) {
-            missingCheckIn('hostDisconnect', null);
-          } else {
-            unresponsiveGuests.push(user.key);
-          }
+let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
+  const db = getDatabase();
+  const connectionRef = ref(db, 'rooms/TEST/connection');
+  const timestamp = Date.now();
+  
+  get(connectionRef).then((snapshot) => {
+    let hostUser = snapshot.val().host;
+    let allUsers = snapshot.val().users;
+    let totalUsers = 0;
+    let unresponsiveGuests = [];
+    for (user in allUsers) {
+      if (user.val().lastVerified  <= timestamp - verificationCadence) {
+        if (user.key === hostUser) {
+          missingCheckIn('hostDisconnect', null);
+        } else {
+          unresponsiveGuests.push(user.key);
         }
-        totalUsers++;
       }
-      if (unresponsiveGuests.length < 1) {
-        allUsersCHeckedIn();
-      } else if (totalUsers - unresponsiveGuests.length - 1 < minimumGuests) {
-        missingCheckIn('notEnoughGuests', null);
-      } else {
-        missingCheckIn('removeGuest', unresponsiveGuests);
-      }
-    });
+      totalUsers++;
+    }
+    if (unresponsiveGuests.length < 1) {
+      allUsersCHeckedIn();
+    } else if (totalUsers - unresponsiveGuests.length - 1 < minimumGuests) {
+      missingCheckIn('notEnoughGuests', null);
+    } else {
+      missingCheckIn('removeGuest', unresponsiveGuests);
+    }
   });
-}
+});
 
 $(document).ready(function () {
   getCheckins().then(

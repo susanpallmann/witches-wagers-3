@@ -45,7 +45,7 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
       totalUsers++;
     }
     if (unresponsiveGuests.length < 1) {
-      allUsersCHeckedIn();
+      allUsersCheckedIn();
     } else if (totalUsers - unresponsiveGuests.length - 1 < minimumGuests) {
       missingCheckIn('notEnoughGuests', null);
     } else {

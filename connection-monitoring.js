@@ -18,11 +18,9 @@ function removeGuests(guests) {
 
 function updateConnectionStatus(code) {
   const db = getDatabase();
-  const connectionRef = ref(db, 'rooms/TEST/connection');
-  let codeUpdate = {
+  update(ref(db, 'rooms/TEST/connection'), {
     connectionStatus: code
-  };
-  update(connectionRef, codeUpdate)
+  })
   .then(() => {
     return true;
   })
@@ -31,6 +29,7 @@ function updateConnectionStatus(code) {
     return false;
   });
 }
+
 
 async function missingCheckIn(code, users) {
   if (code === 'hostDisconnect' || code === 'notEnoughGuests') {

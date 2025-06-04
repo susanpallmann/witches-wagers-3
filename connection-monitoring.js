@@ -5,14 +5,19 @@ const verificationCadence = 60000;
 const minimumGuests = 1;
 
 function removeGuests(guests) {
-  const db = getDatabase();
-  for (let guest in guests) {
-    set(ref(db, `rooms/TEST/connection/users/${guest}`), null).then(() => {
-      return true;
-    }).catch((error) => {
-      console.log('removeGuests: ' + error);
-    });
-  }
+  return new Promise(resolve => {
+    const db = getDatabase();
+    for (let guest in guests) {
+      set(ref(db, `rooms/TEST/connection/users/${guest}`), {
+        null: null;
+      }).then(() => {
+        resolve(true);
+      }).catch((error) => {
+        console.log('removeGuests: ' + error);
+        resolve(false);
+      });
+    }
+  });
 }
 
 function updateConnectionStatus(code) {

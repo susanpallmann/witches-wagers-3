@@ -96,12 +96,10 @@ Firebase realtime database:
   - $room_code
     - connection
       - connectionCode: <>,
+      - lastVerified: timestamp,
       - Users:
         - $user_id
-          - lastVerified: timestamp,
-          - requests:
-            - $user_id2:
-              - verificationStatus: <>
+          - verificationStatus: <>
 - allowedValues:
   - connectionCodes:
     - allConnected: TRUE,

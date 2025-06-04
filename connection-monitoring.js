@@ -22,7 +22,7 @@ let getUnverifiedUsers = new Promise(function(returnUsers) {
   get(connectedUsersRef).then((snapshot) => {
     snapshot.forEach((childSnapshot) => {
       //console.log(childSnapshot.key); 
-      if (childSnapshot.val().lastVerified <= timeStamp - verificationCadence || !childSnapshot.val().lastVerified) {
+      if (childSnapshot.val().lastVerified <= timeStamp - verificationCadence) {
         users.push(childSnapshot.key);
       } else {
       }

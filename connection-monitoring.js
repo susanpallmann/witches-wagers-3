@@ -115,10 +115,8 @@ $(document).ready(function () {
     },
     async function(obj) {
       console.log(obj);
-     // let code = obj[code];
-     // console.log(obj[users]);
-     // let users = obj[users];
-      //handler(code, users);
+      let code = obj[code];
+      let users = obj[users];
 
       let handleMissingCheckIn = await missingCheckIn(code, users);
       if (handleMissingCheckIn) {

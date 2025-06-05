@@ -7,10 +7,12 @@ const minimumGuests = 1;
 function removeGuests(guests) {
   return new Promise(resolve => {
     const db = getDatabase();
-    for (let guest in guests) {
+    for (let i = 0; i < guests.length; i++) {
+      let guest = guests[i];
       set(ref(db, `rooms/TEST/connection/users/${guest}`), {
         null: null
       }).then(() => {
+        continue;
       }).catch((error) => {
         console.log('removeGuests: ' + error);
         resolve(false);

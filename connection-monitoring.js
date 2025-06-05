@@ -99,23 +99,25 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
   });
 });
 
+async function handler(code, users) {
+  console.log(`code sent: ${code}`);
+  
+  console.log(users);
+  let handleMissingCheckIn = await missingCheckIn(code, users);
+  if (handleMissingCheckIn) {
+    console.log('Document ready: Missing check in was handled successfully.')
+  } else {
+    console.log('Document ready: Missing check in could not be handled.')
+  }
+}
+
 $(document).ready(function () {
   getCheckIns.then(
     function() {
       console.log('all users checked in recently');
     },
     function(code, users) {
-      async function(code, users) {
-        console.log(`code sent: ${code}`);
-  
-        console.log(users);
-        let handleMissingCheckIn = await missingCheckIn(code, users);
-        if (handleMissingCheckIn) {
-          console.log('Document ready: Missing check in was handled successfully.')
-        } else {
-          console.log('Document ready: Missing check in could not be handled.')
-        }
-      }
+      handler(code, users);
     }
   );
 });

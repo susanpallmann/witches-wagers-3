@@ -11,12 +11,12 @@ function removeGuests(guests) {
       set(ref(db, `rooms/TEST/connection/users/${guest}`), {
         null: null
       }).then(() => {
-        resolve(true);
       }).catch((error) => {
         console.log('removeGuests: ' + error);
         resolve(false);
       });
     }
+    resolve(true);
   });
 }
 
@@ -50,7 +50,7 @@ async function missingCheckIn(code, users) {
       }
     } else if (code === 'removeGuest') {
       if (users !== null) {
-        // Remove each guest
+        console.log(users);
         let updateSuccessful = await removeGuests(users);
         if (updateSuccessful) {
           console.log('missingCheckIn: Removed disconnected guests ' + users.join(', ') + ' successfully.');

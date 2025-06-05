@@ -92,6 +92,7 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
     } else if (totalUsers - unresponsiveGuests.length - 1 < minimumGuests) {
       missingCheckIn('notEnoughGuests', null);
     } else {
+      console.log(unresponsiveGuests);
       missingCheckIn('removeGuest', unresponsiveGuests);
     }
   });
@@ -104,6 +105,8 @@ $(document).ready(function () {
     },
     async function(code, users) {
       console.log(`code sent: ${code}`);
+
+      console.log(users);
       let handleMissingCheckIn = await missingCheckIn(code, users);
       if (handleMissingCheckIn) {
         console.log('Document ready: Missing check in was handled successfully.')

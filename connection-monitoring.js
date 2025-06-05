@@ -116,10 +116,8 @@ $(document).ready(function () {
     async function(obj) {
       console.log(obj);
       let code = obj.code;
-      let users = obj.users;
-      console.log(obj.code);
-      console.log(obj.users);
-
+      let users = obj.guests;
+      
       let handleMissingCheckIn = await missingCheckIn(code, users);
       if (handleMissingCheckIn) {
         console.log('Document ready: Missing check in was handled successfully.')

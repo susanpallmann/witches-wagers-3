@@ -114,10 +114,10 @@ $(document).ready(function () {
       console.log('all users checked in recently');
     },
     async function(obj) {
-      console.log(obj.code);
-      let code = obj.code;
-      console.log(obj.users);
-      let users = obj.users;
+      console.log(obj);
+     // let code = obj[code];
+     // console.log(obj[users]);
+     // let users = obj[users];
       //handler(code, users);
 
       let handleMissingCheckIn = await missingCheckIn(code, users);

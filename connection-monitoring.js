@@ -50,7 +50,7 @@ async function missingCheckIn(code, users) {
         console.log('missingCheckIn: Unable to update connectionStatus to ' + code);
         resolve(false);
       }
-    } else if (code === 'removeGuest') {
+    } else if (code === 'removeGuests') {
       if (users !== null) {
         console.log(users);
         let updateSuccessful = await removeGuests(users);
@@ -95,7 +95,7 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
       missingCheckIn('notEnoughGuests', null);
     } else {
       console.log(unresponsiveGuests);
-      missingCheckIn('removeGuest', unresponsiveGuests);
+      missingCheckIn('removeGuests', unresponsiveGuests);
     }
   });
 });

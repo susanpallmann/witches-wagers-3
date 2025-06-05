@@ -12,7 +12,6 @@ function removeGuests(guests) {
       set(ref(db, `rooms/TEST/connection/users/${guest}`), {
         null: null
       }).then(() => {
-        continue;
       }).catch((error) => {
         console.log('removeGuests: ' + error);
         resolve(false);

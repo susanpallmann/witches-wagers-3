@@ -108,24 +108,29 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
   });
 });
 
-$(document).ready(function () {
-  getCheckIns.then(
-    function() {
-      console.log('all users checked in recently');
-    },
-    async function(obj) {
-      console.log(obj);
-      let code = obj.code;
-      let users = obj.guests;
-      
-      let handleMissingCheckIn = await missingCheckIn(code, users);
-      if (handleMissingCheckIn) {
-        console.log('Document ready: Missing check in was handled successfully.')
-      } else {
-        console.log('Document ready: Missing check in could not be handled.')
+function verifyCheckIns () {
+  getCheckIns
+    .then(
+      function() {
+        console.log('all users checked in recently');
+      },
+      async function(obj) {
+        console.log(obj);
+        let code = obj.code;
+        let users = obj.guests;
+        
+        let handleMissingCheckIn = await missingCheckIn(code, users);
+        if (handleMissingCheckIn) {
+          console.log('Document ready: Missing check in was handled successfully.')
+        } else {
+          console.log('Document ready: Missing check in could not be handled.')
+        }
       }
-    }
-  );
+    );
+}
+
+$(document).ready(function () {
+  verifyCheckIns();
 });
 
 /*

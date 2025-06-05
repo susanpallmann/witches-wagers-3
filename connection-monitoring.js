@@ -81,7 +81,10 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
     for (let user in allUsers) {
       if (allUsers[user].lastVerified  <= timestamp - verificationCadence) {
         if (user === hostUser) {
-          missingCheckIn('hostDisconnect', null);
+          missingCheckIn({
+        code: 'hostDisconnect',
+        guests: null
+      });
         } else {
           unresponsiveGuests.push(user);
         }
@@ -91,35 +94,38 @@ let getCheckIns = new Promise(function(allUsersCheckedIn, missingCheckIn) {
     if (unresponsiveGuests.length < 1) {
       allUsersCheckedIn();
     } else if (totalUsers - unresponsiveGuests.length - 1 < minimumGuests) {
-      missingCheckIn('notEnoughGuests', null);
+      missingCheckIn({
+        code: 'notEnoughGuests',
+        guests: null
+      });
     } else {
       console.log(unresponsiveGuests);
-      missingCheckIn('removeGuests', unresponsiveGuests);
+      missingCheckIn({
+        code: 'removeGuests',
+        guests: unresponsiveGuests
+      });
     }
   });
 });
-
-async function handler(code, users) {
-  console.log(`code sent: ${code}`);
-  
-  console.log(users);
-  let handleMissingCheckIn = await missingCheckIn(code, users);
-  if (handleMissingCheckIn) {
-    console.log('Document ready: Missing check in was handled successfully.')
-  } else {
-    console.log('Document ready: Missing check in could not be handled.')
-  }
-}
 
 $(document).ready(function () {
   getCheckIns.then(
     function() {
       console.log('all users checked in recently');
     },
-    function(code, users) {
-      console.log(code);
-      console.log(users);
-      handler(code, users);
+    async function(obj) {
+      console.log(obj.code);
+      let code = obj.code;
+      console.log(obj.users);
+      let users = obj.users;
+      //handler(code, users);
+
+      let handleMissingCheckIn = await missingCheckIn(code, users);
+      if (handleMissingCheckIn) {
+        console.log('Document ready: Missing check in was handled successfully.')
+      } else {
+        console.log('Document ready: Missing check in could not be handled.')
+      }
     }
   );
 });

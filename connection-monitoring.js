@@ -104,15 +104,17 @@ $(document).ready(function () {
     function() {
       console.log('all users checked in recently');
     },
-    async function(code, users) {
-      console.log(`code sent: ${code}`);
-
-      console.log(users);
-      let handleMissingCheckIn = await missingCheckIn(code, users);
-      if (handleMissingCheckIn) {
-        console.log('Document ready: Missing check in was handled successfully.')
-      } else {
-        console.log('Document ready: Missing check in could not be handled.')
+    function(code, users) {
+      async function(code, users) {
+        console.log(`code sent: ${code}`);
+  
+        console.log(users);
+        let handleMissingCheckIn = await missingCheckIn(code, users);
+        if (handleMissingCheckIn) {
+          console.log('Document ready: Missing check in was handled successfully.')
+        } else {
+          console.log('Document ready: Missing check in could not be handled.')
+        }
       }
     }
   );

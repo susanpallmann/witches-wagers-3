@@ -117,6 +117,8 @@ $(document).ready(function () {
       console.log('all users checked in recently');
     },
     function(code, users) {
+      console.log(code);
+      console.log(users);
       handler(code, users);
     }
   );

@@ -11,7 +11,6 @@ class userSession = {
 	}
 }
 
-
 function isUserHost(user) {
 	return user.host;
 }
@@ -256,6 +255,8 @@ function joinRoom(uid, roomcode) {
 		console.log(`joinRoom: Firebase error: ${error}`);
 	});
 }
+
+function
 
 $(document).ready(function() {
 	let currentUserSession;

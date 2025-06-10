@@ -129,7 +129,7 @@ function updateConnectionStatus(code) {
 		  reject(`updateConnectionStatus: Firebase error: ${error}`);
 		});
 
-	}
+	});
 }
 
 // Function that, given an array of disconnectedUsers, takes the appropriate action and returns TRUE if action was successfully completed. Returns an error message if not.

@@ -256,7 +256,14 @@ function joinRoom(uid, roomcode) {
 	});
 }
 
-function
+function connectionCodeListener() {
+  const db = getDatabase();
+  const connectionCodeRef = ref(db, 'rooms/TEST/connection/connectionStatus');
+  onValue(connectionCodeRef, (snapshot) => {
+    connectionCode = snapshot.val();
+    console.log(`connectionCodeListener: connection status changed to '${connectionCode}'`);
+  });
+}
 
 $(document).ready(function() {
 	let currentUserSession;
@@ -270,6 +277,7 @@ $(document).ready(function() {
 				joinRoom(user.uid, 'TEST');
 				verificationInterval = setInterval(function(user.uid) {
 					verifyUser(user.uid);
+					connectionCodeListener();
 				}, ageAllowance);
 			} else {
 				console.log(`$(document).ready: user is signed out.`);

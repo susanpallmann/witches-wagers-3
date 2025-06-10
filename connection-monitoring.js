@@ -5,7 +5,7 @@ const ageAllowance = 60000;
 const minGuests = 4
 const maxGuests = 8;
 
-class userSession = {
+class userSession {
 	constructor(uid) {
 		this.uid = uid;
 	}

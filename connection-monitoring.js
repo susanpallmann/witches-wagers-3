@@ -291,8 +291,8 @@ $(document).ready(function() {
 				let uid = currentUserSession.uid;
 				joinRoom(uid, 'TEST');
 				connectionCodeListener();
-				verificationInterval = setInterval(function(uid) {
-					verifyUser(uid);
+				verificationInterval = setInterval(function() {
+					verifyUser(currentUserSession.uid);
 				}, ageAllowance);
 			} else {
 				console.log(`$(document).ready: user is signed out.`);

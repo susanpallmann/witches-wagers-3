@@ -241,20 +241,25 @@ function joinRoom(uid, roomcode) {
 	const db = getDatabase();
 	let updates = {};
 	let timestamp = Date.now();
-	let joinOrder = getNumUsers(roomcode);
-	let isHost = false;
-	if (joinOrder === 0) {
-		isHost = true;
-	}
-	updates[uid] = {
-		lastVerified: timestamp,
-		isHost: isHost,
-		joinOrder: joinOrder
-	};
-	update(ref(db, `rooms/${roomcode}/connection/users`), updates).then(() => {
+	let joinOrder;
+	getNumUsers(roomcode).then((numUsers) => {
+		joinOrder = numUsers;
+		let isHost = false;
+		if (joinOrder === 0) {
+			isHost = true;
+		}
+		updates[uid] = {
+			lastVerified: timestamp,
+			isHost: isHost,
+			joinOrder: joinOrder
+		};
+		update(ref(db, `rooms/${roomcode}/connection/users`), updates).then(() => {
+		})
+		.catch((error) => {
+			console.log(`joinRoom: Firebase error: ${error}`);
+		});
 	})
 	.catch((error) => {
-		console.log(`joinRoom: Firebase error: ${error}`);
 	});
 }
 
@@ -275,7 +280,6 @@ $(document).ready(function() {
 	.then((auth) => {
 		onAuthStateChanged(auth, (user) => {
 			if (user) {
-				console.log(user.uid);
 				let uid = user.uid;
 				currentUserSession = new userSession(uid);
 				joinRoom(uid, 'TEST');

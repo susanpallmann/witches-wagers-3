@@ -246,8 +246,8 @@ function joinRoom(uid, roomcode) {
 	let isHost = joinOrder === 0;
 	update[uid] = {
 		lastVerified: timestamp,
-		isHost = isHost,
-		joinOrder = joinOrder
+		isHost: isHost,
+		joinOrder: joinOrder
 	};
 	update(ref(db, `rooms/${roomcode}/connection/users`), update).then(() => {
 	})

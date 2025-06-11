@@ -260,7 +260,7 @@ function connectionCodeListener() {
   const db = getDatabase();
   const connectionCodeRef = ref(db, 'rooms/TEST/connection/connectionStatus');
   onValue(connectionCodeRef, (snapshot) => {
-    connectionCode = snapshot.val();
+    let connectionCode = snapshot.val();
     console.log(`connectionCodeListener: connection status changed to '${connectionCode}'`);
   });
 }

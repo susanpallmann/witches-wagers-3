@@ -228,7 +228,9 @@ function getNumUsers(roomcode) {
 		const db = getDatabase();
 		get(ref(db, `rooms/${roomcode}/connection`)).then((snapshot) => {
 			let users = snapshot.val().users;
+			console.log(users);
 			let numUsers = Number(users.length);
+			console.log(numUsers);
 			resolve(numUsers);
 		})
 		.catch((error) => {

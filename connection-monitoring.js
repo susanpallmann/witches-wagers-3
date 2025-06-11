@@ -164,7 +164,7 @@ function handleDisconnectedUsers(data) {
 						reject(`handleDisconnectedUsers: error setting lobby connection status to disconnectCode (${disconnectCode}). Firebase error: ${error}.`);
 					});
 				// If the disconnect code is 'removeUsers':
-				} else if (disconnectCode === 'removeUsers') {
+				} else if (disconnectCode === 'removeGuests') {
 					
 					// Run removeUsers, passing in the disconnectedUsers array.
 					removeUsers(disconnectedUsers)

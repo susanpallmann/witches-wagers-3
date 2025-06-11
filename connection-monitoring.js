@@ -212,7 +212,7 @@ function verifyUser(uid) {
 }
 
 function anonSignIn () {
-	return newPromise(function (resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		const auth = getAuth();
 		
 		signInAnonymously(auth)

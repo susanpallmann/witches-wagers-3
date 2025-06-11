@@ -2,7 +2,7 @@ import { getDatabase, ref, get, child, set, onValue, push, update, remove } from
 import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
 
 const ageAllowance = 60000;
-const minGuests = 4
+const minGuests = 2
 const maxGuests = 8;
 
 class userSession {
@@ -323,6 +323,7 @@ function connectionCodeListener() {
 $(document).ready(function() {
 	let currentUserSession;
 	let verificationInterval;
+	let checkInterval;
 	
 	anonSignIn()
 	.then((auth) => {
@@ -336,6 +337,9 @@ $(document).ready(function() {
 				verificationInterval = setInterval(function() {
 					verifyUser(currentUserSession.uid, 'TEST');
 				}, ageAllowance);
+				checkInterval = setInterval(function() {
+					checkForDisconnects();
+				}, ageAllowance*2);
 			} else {
 				console.log(`$(document).ready: user is signed out.`);
 				clearInterval(verificationInterval);

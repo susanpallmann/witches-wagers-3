@@ -284,7 +284,7 @@ $(document).ready(function() {
 		onAuthStateChanged(auth, (user) => {
 			if (user) {
 				let constructorUid = user.uid;
-				currentUserSession = new userSession(uid);
+				currentUserSession = new userSession(constructorUid);
 				let uid = currentUserSession.uid;
 				joinRoom(uid, 'TEST');
 				connectionCodeListener();

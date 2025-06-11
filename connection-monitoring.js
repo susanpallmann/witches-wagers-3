@@ -30,7 +30,7 @@ function writeDisconnectCode(data) {
 	return new Promise(function (resolve, reject) {
 		const { disconnectedUsers, users } = data;
 		// 1. First, check if the host is among the disconnected. This is the highest priority.
-		const isHostDisconnected = disconnectedUsers.some(user => isUserHost(user));
+		const isHostDisconnected = disconnectedUsers.some(user => isUserHost(users.user));
 		console.log(isHostDisconnected);
 		if (isHostDisconnected) {
 			resolve('hostDisconnected');

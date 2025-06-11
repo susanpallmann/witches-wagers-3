@@ -227,7 +227,6 @@ function getNumUsers(roomcode) {
 	return new Promise(function (resolve, reject) {
 		const db = getDatabase();
 		get(ref(db, `rooms/${roomcode}/connection`)).then((snapshot) => {
-			console.log(snapshot.val());
 			let users = snapshot.val().users;
 			let numUsers = 0;
 			if (users) {
@@ -246,7 +245,7 @@ function checkForUser(uid, roomcode) {
 	return new Promise(function (resolve, reject) {
 		const db = getDatabase();
 		console.log(uid + ' ' + roomcode);
-		get(child(db, `rooms/${roomcode}/connection/users/${uid}`))
+		get(ref(db, `rooms/${roomcode}/connection/users/${uid}`))
 		.then((snapshot) => {
 			if (snapshot.exists()) {
 				console.log('snapshot exists');
@@ -257,7 +256,7 @@ function checkForUser(uid, roomcode) {
 			}
 		})
 		.catch((error) => {
-			console.log('error is running');
+			console.log(error);
 			reject(`getNumUsers: Firebase error: ${error}`);
 		});
 	});

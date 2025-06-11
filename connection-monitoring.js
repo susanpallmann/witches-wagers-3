@@ -385,6 +385,8 @@ class GameLobby {
 	
 	checkForUser(uid) {
 		if (uid in this.connection.users) {
+			console.log(uid);
+			console.log(this.connection.users);
 			return true;
 		} else {
 			return false;

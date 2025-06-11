@@ -231,7 +231,7 @@ function getNumUsers(roomcode) {
 			let users = snapshot.val().users;
 			let numUsers = 0;
 			if (users) {
-				numUsers = Number(users.length);
+				numUsers = Object.keys(users).length;
 			} else {
 			}
 			resolve(numUsers);

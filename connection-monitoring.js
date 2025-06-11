@@ -181,7 +181,7 @@ function handleDisconnectedUsers(data) {
 				} else {
 					reject(`handleDisconnectedUsers: disconnectCode (${disconnectCode}) is not recognized.`);
 				}
-			})
+			});
 		// Return an error if the number of disconnected users exceeds the range of what is possible for a lobby based on external variable maxGuests.
 		} else {
 			reject(`handleDisconnectedUsers: length of disconnectedUsers (${disconnectedUsers.length}) is outside of expected range (${maxGuests}).`);
@@ -245,6 +245,7 @@ function getNumUsers(roomcode) {
 function checkForUser(uid, roomcode) {
 	return new Promise(function (resolve, reject) {
 		const db = getDatabase();
+		console.log(uid + ' ' + roomcode);
 		get(child(db, `rooms/${roomcode}/connection/users/${uid}`)).then((snapshot) => {
 			if (snapshot.exists()) {
 				resolve(true);

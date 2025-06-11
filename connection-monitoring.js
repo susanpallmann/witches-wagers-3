@@ -242,6 +242,22 @@ function getNumUsers(roomcode) {
 	});
 }
 
+function checkForUser(uid, roomcode) {
+	return new Promise(function (resolve, reject) {
+		const db = getDatabase();
+		get(child(db, `rooms/${roomcode}/connection/users/${uid}`)).then((snapshot) => {
+			if (snapshot.exists()) {
+				resolve(true);
+			} else {
+				resolve(false);
+			}
+		})
+		.catch((error) => {
+			reject(`getNumUsers: Firebase error: ${error}`);
+		});
+	});
+}
+
 function joinRoom(uid, roomcode) {
 	const db = getDatabase();
 	let updates = {};
@@ -250,22 +266,39 @@ function joinRoom(uid, roomcode) {
 	getNumUsers(roomcode).then((numUsers) => {
 		console.log(numUsers);
 		joinOrder = numUsers;
-		let isHost = false;
-		if (joinOrder === 0) {
-			isHost = true;
+		if (joinOrder <= maxGuests && joinOrder >= 0) {
+			checkForUser(uid, roomcode)
+			.then((userExists) => {
+				if (userExists) {
+					// Don't join if user is already present in room
+				} else {
+					let isHost = false;
+					if (joinOrder === 0) {
+						isHost = true;
+					}
+					updates[uid] = {
+						lastVerified: timestamp,
+						isHost: isHost,
+						joinOrder: joinOrder
+					};
+					update(ref(db, `rooms/${roomcode}/connection/users`), updates).then(() => {
+					})
+					.catch((error) => {
+						console.log(`joinRoom: Firebase error: ${error}`);
+					});
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		} else if (joinOrder > maxGuests) {
+			// Lobby is full (TODO)
+		} else {
+			console.log(`joinRoom: Unexpected value for JoinOrder (${joinOrder}).`);
 		}
-		updates[uid] = {
-			lastVerified: timestamp,
-			isHost: isHost,
-			joinOrder: joinOrder
-		};
-		update(ref(db, `rooms/${roomcode}/connection/users`), updates).then(() => {
-		})
-		.catch((error) => {
-			console.log(`joinRoom: Firebase error: ${error}`);
-		});
 	})
 	.catch((error) => {
+		console.log(`joinRoom: Firebase error: ${error}`);
 	});
 }
 

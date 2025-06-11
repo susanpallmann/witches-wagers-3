@@ -284,10 +284,10 @@ $(document).ready(function() {
 				let uid = user.uid;
 				console.log(uid);
 				currentUserSession = new userSession(uid);
-				joinRoom(uid, 'TEST');
+				joinRoom(userSession.uid, 'TEST');
 				connectionCodeListener();
-				verificationInterval = setInterval(function(uid) {
-					verifyUser(uid);
+				verificationInterval = setInterval(function(userSession.uid) {
+					verifyUser(userSession.uid);
 				}, ageAllowance);
 			} else {
 				console.log(`$(document).ready: user is signed out.`);

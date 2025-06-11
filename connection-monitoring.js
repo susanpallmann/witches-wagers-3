@@ -268,9 +268,11 @@ function joinRoom(uid, roomcode) {
 	let updates = {};
 	let timestamp = Date.now();
 	let joinOrder;
-	getNumUsers(roomcode).then((numUsers) => {
+	getNumUsers(roomcode)
+	.then((numUsers) => {
 		console.log(numUsers);
 		joinOrder = numUsers;
+		console.log(uid);
 		if (joinOrder <= maxGuests && joinOrder >= 0) {
 			checkForUser(uid, roomcode)
 			.then((userExists) => {

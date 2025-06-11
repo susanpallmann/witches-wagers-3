@@ -419,10 +419,10 @@ class GameLobby {
 	}
 }
 
-$(document).ready(function () {
-	let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
-	lobby.initConnectionStatusListener();
-	lobby.initUsersListener();
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
+function timeoutFunction (lobby) {
+	await delay(5000);
 	lobby.updateUserAttribute(`testFakeUser`, `isHost`, true).then(() => {
 	}).catch((error) => {
 		lobby.logError(error);
@@ -431,4 +431,11 @@ $(document).ready(function () {
 	}).catch((error) => {
 		lobby.logError(error);
 	});
+}
+
+$(document).ready(function () {
+	let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
+	lobby.initConnectionStatusListener();
+	lobby.initUsersListener();
+	timeoutFunction(lobby);
 });

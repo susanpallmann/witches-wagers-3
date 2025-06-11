@@ -253,7 +253,6 @@ function getNumUsers(roomcode) {
 function checkForUser(uid, roomcode) {
 	return new Promise(function (resolve, reject) {
 		const db = getDatabase();
-		console.log(uid + ' ' + roomcode);
 		get(ref(db, `rooms/${roomcode}/connection/users/${uid}`))
 		.then((snapshot) => {
 			if (snapshot.exists()) {
@@ -275,9 +274,7 @@ function joinRoom(uid, roomcode) {
 	let joinOrder;
 	getNumUsers(roomcode)
 	.then((numUsers) => {
-		console.log(numUsers);
 		joinOrder = numUsers;
-		console.log(uid);
 		if (joinOrder <= maxGuests && joinOrder >= 0) {
 			checkForUser(uid, roomcode)
 			.then((userExists) => {

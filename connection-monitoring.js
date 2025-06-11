@@ -404,6 +404,7 @@ class GameLobby {
 					reject(error);
 				});
 			} else {
+				console.log(${this.connection.users});
 				reject(`GameLobby | updateUserAttribute: uid (${uid}) was not found in users (${this.connection.users}).`);
 			}
 		});

@@ -356,9 +356,7 @@ $(document).ready(function() {
 		console.log(error);
 	});
 });
-*/
-
-class GameLobby {
+*/class GameLobby {
 	
 	logError(error) {
 		console.log(error);
@@ -424,5 +422,8 @@ $(document).ready(function () {
 	let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
 	lobby.initConnectionStatusListener();
 	lobby.initUsersListener();
-	lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, true);
+	lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, true).then(() => {
+	}).catch((error) => {
+		lobby.logError(error);
+	});
 });

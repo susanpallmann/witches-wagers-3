@@ -259,7 +259,7 @@ function joinRoom(uid, roomcode) {
 			isHost: isHost,
 			joinOrder: joinOrder
 		};
-		set(ref(db, `rooms/${roomcode}/connection/users`), updates).then(() => {
+		update(ref(db, `rooms/${roomcode}/connection/users`), updates).then(() => {
 		})
 		.catch((error) => {
 			console.log(`joinRoom: Firebase error: ${error}`);

@@ -361,13 +361,16 @@ $(document).ready(function() {
 
 
 
+
 class GameLobby {
 	
 	initConnectionStatusListener() {
 		this.database;
 		let connectionStatusRef = ref(this.database, `rooms/${this.roomcode}/connection/connectionStatus`);
 		onValue(connectionStatusRef, (snapshot) => {
+			console.log(snapshot);
 			console.log(snapshot.val());
+			console.log(snapshot.key());
 		});
 	}
 	

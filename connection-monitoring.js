@@ -202,11 +202,20 @@ function checkForDisconnects() {
 	});
 }
 
-function verifyUser(uid) {
-	const db = getDatabase();
-	let timestamp = Date.now();
-	update(ref(db, `rooms/TEST/connection/users/${uid}`), {
-		lastVerified: timestamp
+function verifyUser(uid, roomcode) {
+	checkForUser(uid, roomcode)
+	.then((userExists) => {
+		if (userExists) {
+			const db = getDatabase();
+			let timestamp = Date.now();
+			update(ref(db, `rooms/TEST/connection/users/${uid}`), {
+				lastVerified: timestamp
+			});
+		} else {
+		}
+	})
+	.catch((error) => {
+		console.log(error);
 	});
 }
 
@@ -248,15 +257,12 @@ function checkForUser(uid, roomcode) {
 		get(ref(db, `rooms/${roomcode}/connection/users/${uid}`))
 		.then((snapshot) => {
 			if (snapshot.exists()) {
-				console.log('snapshot exists');
 				resolve(true);
 			} else {
-				console.log(`snapshot doesn't exist`);
 				resolve(false);
 			}
 		})
 		.catch((error) => {
-			console.log(error);
 			reject(`getNumUsers: Firebase error: ${error}`);
 		});
 	});
@@ -331,7 +337,7 @@ $(document).ready(function() {
 				joinRoom(uid, 'TEST');
 				connectionCodeListener();
 				verificationInterval = setInterval(function() {
-					verifyUser(currentUserSession.uid);
+					verifyUser(currentUserSession.uid, 'TEST');
 				}, ageAllowance);
 			} else {
 				console.log(`$(document).ready: user is signed out.`);

@@ -421,7 +421,7 @@ class GameLobby {
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-function timeoutFunction (lobby) {
+async function timeoutFunction (lobby) {
 	await delay(5000);
 	lobby.updateUserAttribute(`testFakeUser`, `isHost`, true).then(() => {
 	}).catch((error) => {
@@ -438,4 +438,6 @@ $(document).ready(function () {
 	lobby.initConnectionStatusListener();
 	lobby.initUsersListener();
 	timeoutFunction(lobby);
+	
+	
 });

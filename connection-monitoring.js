@@ -1,6 +1,6 @@
 import { getDatabase, ref, get, child, set, onValue, push, update, remove } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
 import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
-
+/*
 const ageAllowance = 60000;
 const minGuests = 2
 const maxGuests = 8;
@@ -355,4 +355,39 @@ $(document).ready(function() {
 	.catch(error => {
 		console.log(error);
 	});
+});
+*/
+
+
+class GameLobby {
+	
+	initConnectionStatusListener() {
+		this.database;
+		let connectionStatusRef = ref(this.database, `rooms/${this.roomcode}/connection/connectionStatus`);
+		onValue(connectionStatusRef, (snapshot) => {
+			console.log(snapshot.val());
+		});
+	}
+	
+	initUsersListener() {
+		this.database;
+	}
+	
+	generateRoomCode() {
+		return `TEST`;
+	}
+	
+	constructor(host) {
+		this.database = getDatabase();
+		this.roomCode = generateRoomCode();
+		this.connection = {
+			connectionStatus: 'lobbySetup',
+			users: {}
+		}
+	}
+}
+
+$(document).ready(function () {
+	let lobby = new GameLobby('8OVqx8U1FlRC0RMGHyrBF7LzJk12');
+	lobby.initConnectionStatusListener();
 });

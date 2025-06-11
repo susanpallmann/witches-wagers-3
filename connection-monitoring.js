@@ -222,7 +222,7 @@ function anonSignIn () {
 			reject(`anonSignIn: Firebase error: ${error}`);
 		});		
 	});
-});
+}
 
 function getNumUsers(roomcode) {
 	return new Promise(function (resolve, reject) {

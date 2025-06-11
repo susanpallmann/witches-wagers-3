@@ -1,4 +1,5 @@
 # witches-wagers-3
+*I'm gonna learn back-end stuff if it kills me*
 ## Initiatives
 ### Environment setup
 Get basic dev environment set up so we can build things.

@@ -357,14 +357,14 @@ $(document).ready(function() {
 	});
 });
 */
-
 class GameLobby {
 	
 	initConnectionStatusListener() {
 		let connectionStatusRef = ref(this.database, `rooms/${this.roomCode}/connection/connectionStatus`);
 		onValue(connectionStatusRef, (snapshot) => {
-			console.log(snapshot);
-			console.log(snapshot.val());
+			this.connection.connectionStatus = snapshot.val();
+			// Do something when the connectionStatus changes
+			console.log(this.connection.connectionStatus);
 		});
 	}
 	

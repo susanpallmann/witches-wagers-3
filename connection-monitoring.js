@@ -257,7 +257,7 @@ function checkForUser(uid, roomcode) {
 			}
 		})
 		.catch((error) => {
-			console.log(error);
+			console.log('error is running');
 			reject(`getNumUsers: Firebase error: ${error}`);
 		});
 	});

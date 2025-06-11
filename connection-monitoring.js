@@ -283,13 +283,13 @@ $(document).ready(function() {
 	.then((auth) => {
 		onAuthStateChanged(auth, (user) => {
 			if (user) {
-				
-				console.log(uid);
+				let constructorUid = user.uid;
 				currentUserSession = new userSession(uid);
-				joinRoom(currentUserSession.uid, 'TEST');
+				let uid = currentUserSession.uid;
+				joinRoom(uid, 'TEST');
 				connectionCodeListener();
-				verificationInterval = setInterval(function(currentUserSession.uid) {
-					verifyUser(currentUserSession.uid);
+				verificationInterval = setInterval(function(uid) {
+					verifyUser(uid);
 				}, ageAllowance);
 			} else {
 				console.log(`$(document).ready: user is signed out.`);

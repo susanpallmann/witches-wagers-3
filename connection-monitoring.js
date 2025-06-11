@@ -424,7 +424,10 @@ class GameLobby {
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-async function timeoutFunction (lobby) {
+$(document).ready(async function () {
+	let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
+	lobby.initConnectionStatusListener();
+	lobby.initUsersListener();
 	await delay(5000);
 	lobby.updateUserAttribute(`testFakeUser`, `isHost`, true).then(() => {
 	}).catch((error) => {
@@ -434,13 +437,4 @@ async function timeoutFunction (lobby) {
 	}).catch((error) => {
 		lobby.logError(error);
 	});
-}
-
-$(document).ready(function () {
-	let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
-	lobby.initConnectionStatusListener();
-	lobby.initUsersListener();
-	timeoutFunction(lobby);
-	
-	
 });

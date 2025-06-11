@@ -248,8 +248,10 @@ function checkForUser(uid, roomcode) {
 		console.log(uid + ' ' + roomcode);
 		get(child(db, `rooms/${roomcode}/connection/users/${uid}`)).then((snapshot) => {
 			if (snapshot.exists()) {
+				console.log('snapshot exists');
 				resolve(true);
 			} else {
+				console.log(`snapshot doesn't exist`);
 				resolve(false);
 			}
 		})

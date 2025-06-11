@@ -246,7 +246,8 @@ function checkForUser(uid, roomcode) {
 	return new Promise(function (resolve, reject) {
 		const db = getDatabase();
 		console.log(uid + ' ' + roomcode);
-		get(child(db, `rooms/${roomcode}/connection/users/${uid}`)).then((snapshot) => {
+		get(child(db, `rooms/${roomcode}/connection/users/${uid}`))
+		.then((snapshot) => {
 			if (snapshot.exists()) {
 				console.log('snapshot exists');
 				resolve(true);
@@ -256,6 +257,7 @@ function checkForUser(uid, roomcode) {
 			}
 		})
 		.catch((error) => {
+			console.log(error);
 			reject(`getNumUsers: Firebase error: ${error}`);
 		});
 	});

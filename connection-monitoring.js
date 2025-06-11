@@ -357,22 +357,47 @@ $(document).ready(function() {
 	});
 });
 */
+
+
 class GameLobby {
+	
+	logError(error) {
+		console.log(error);
+	}
+	
+	generateRoomCode() {
+		return `TEST`;
+	}
 	
 	initConnectionStatusListener() {
 		let connectionStatusRef = ref(this.database, `rooms/${this.roomCode}/connection/connectionStatus`);
 		onValue(connectionStatusRef, (snapshot) => {
 			this.connection.connectionStatus = snapshot.val();
-			// Do something when the connectionStatus changes
 			console.log(this.connection.connectionStatus);
 		});
 	}
 	
 	initUsersListener() {
+		let usersRef = ref(this.database, `rooms/${this.roomCode}/connection/users`);
+		onValue(usersRef, (snapshot) => {
+			this.users = snapshot.val();
+			console.log(this.users);
+		});
 	}
 	
-	generateRoomCode() {
-		return `TEST`;
+	updateUserAttribute(uid, attribute, data) {
+		return new Promise((resolve, reject) => {
+			let userRef = ref(this.database, `rooms/${this.roomCode}/connection/users/${uid}`);
+			let newData = {};
+			newData[attribute] = data;
+			update(userRef, newData)
+			.then(() => {
+				resolve(true);
+			}).catch((error) => {
+				this.logError(error);
+				reject(error);
+			});
+		});
 	}
 	
 	constructor(host) {
@@ -388,4 +413,6 @@ class GameLobby {
 $(document).ready(function () {
 	let lobby = new GameLobby('8OVqx8U1FlRC0RMGHyrBF7LzJk12');
 	lobby.initConnectionStatusListener();
+	lobby.initUsersListener();
+	console.log(lobby.updateUserAttribute('8OVqx8U1FlRC0RMGHyrBF7LzJk12', 'isHost', true));
 });

@@ -227,6 +227,7 @@ function getNumUsers(roomcode) {
 	return new Promise(function (resolve, reject) {
 		const db = getDatabase();
 		get(ref(db, `rooms/${roomcode}/connection`)).then((snapshot) => {
+			console.log(snapshot);
 			let users = snapshot.val().users;
 			let numUsers = 0;
 			if (users) {

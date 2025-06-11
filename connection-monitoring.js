@@ -358,55 +358,17 @@ $(document).ready(function() {
 });
 */
 
-
-
-
-
 class GameLobby {
 	
 	initConnectionStatusListener() {
-		this.database;
-		let connectionStatusRef = ref(this.database, `rooms/${this.roomcode}/connection/connectionStatus`);
-		onValue(connectionStatusRef, (snapshot) => {
-			console.log(snapshot);
-			console.log(snapshot.val());
-			console.log(snapshot.key());
-		});
-	}
-	
-	initUsersListener() {
-		this.database;
-	}
-	
-	generateRoomCode() {
-		return `TEST`;
-	}
-	
-	constructor(host) {
-		this.database = getDatabase();
-		this.roomCode = this.generateRoomCode();
-		this.connection = {
-			connectionStatus: 'lobbySetup',
-			users: {}
-		}
-	}
-}
-
-
-class GameLobby {
-	
-	initConnectionStatusListener() {
-		this.database;
 		let connectionStatusRef = ref(this.database, `rooms/${this.roomCode}/connection/connectionStatus`);
 		onValue(connectionStatusRef, (snapshot) => {
 			console.log(snapshot);
 			console.log(snapshot.val());
-			console.log(snapshot.key());
 		});
 	}
 	
 	initUsersListener() {
-		this.database;
 	}
 	
 	generateRoomCode() {

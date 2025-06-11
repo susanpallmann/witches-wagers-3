@@ -359,6 +359,8 @@ $(document).ready(function() {
 */
 
 
+
+
 class GameLobby {
 	
 	initConnectionStatusListener() {
@@ -379,7 +381,7 @@ class GameLobby {
 	
 	constructor(host) {
 		this.database = getDatabase();
-		this.roomCode = generateRoomCode();
+		this.roomCode = this.generateRoomCode();
 		this.connection = {
 			connectionStatus: 'lobbySetup',
 			users: {}

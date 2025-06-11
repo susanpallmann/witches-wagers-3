@@ -16,20 +16,19 @@ function isUserHost(user) {
 }
 
 function removeUsers(disconnectedUsers) {
-    const db = getDatabase();
-    const removalPromises = disconnectedUsers.map(user => {
-        return remove(ref(db, `rooms/TEST/connection/users/${user.id}`));
-    });
-    // Just return the promise that Promise.all creates
-    return Promise.all(removalPromises);
+	const db = getDatabase();
+	const removalPromises = disconnectedUsers.map(user => {
+	return remove(ref(db, `rooms/TEST/connection/users/${user.id}`));
+	});
+	// Just return the promise that Promise.all creates
+	return Promise.all(removalPromises);
 }
 
 function writeDisconnectCode(data) {
-    return new Promise(function (resolve, reject) {
-        const { disconnectedUsers, users } = data;
-
-        // 1. First, check if the host is among the disconnected. This is the highest priority.
-        const isHostDisconnected = disconnectedUsers.some(user => isUserHost(user));
+	return new Promise(function (resolve, reject) {
+		const { disconnectedUsers, users } = data;
+		// 1. First, check if the host is among the disconnected. This is the highest priority.
+		const isHostDisconnected = disconnectedUsers.some(user => isUserHost(user));
         if (isHostDisconnected) {
             resolve('hostDisconnected');
             return; // Exit the function
@@ -243,7 +242,10 @@ function joinRoom(uid, roomcode) {
 	let updates = {};
 	let timestamp = Date.now();
 	let joinOrder = getNumUsers(roomcode);
-	let isHost = joinOrder === 0;
+	let isHost = false;
+	if (joinOrder === 0) {
+		isHost = true;
+	}
 	updates[uid] = {
 		lastVerified: timestamp,
 		isHost: isHost,
@@ -257,12 +259,12 @@ function joinRoom(uid, roomcode) {
 }
 
 function connectionCodeListener() {
-  const db = getDatabase();
-  const connectionCodeRef = ref(db, 'rooms/TEST/connection/connectionStatus');
-  onValue(connectionCodeRef, (snapshot) => {
-    let connectionCode = snapshot.val();
-    console.log(`connectionCodeListener: connection status changed to '${connectionCode}'`);
-  });
+	const db = getDatabase();
+	const connectionCodeRef = ref(db, 'rooms/TEST/connection/connectionStatus');
+	onValue(connectionCodeRef, (snapshot) => {
+	let connectionCode = snapshot.val();
+	console.log(`connectionCodeListener: connection status changed to '${connectionCode}'`);
+	});
 }
 
 $(document).ready(function() {

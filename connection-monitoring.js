@@ -358,9 +358,6 @@ $(document).ready(function() {
 });
 */
 
-
-
-
 class GameLobby {
 	
 	logError(error) {
@@ -397,7 +394,7 @@ class GameLobby {
 	
 	updateUserAttribute(uid, attribute, data) {
 		return new Promise((resolve, reject) => {
-			if (checkForUser(uid)) {
+			if (this.checkForUser(uid)) {
 				let userRef = ref(this.database, `rooms/${this.roomCode}/connection/users/${uid}`);
 				let newData = {};
 				newData[attribute] = data;
@@ -427,5 +424,5 @@ $(document).ready(function () {
 	let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
 	lobby.initConnectionStatusListener();
 	lobby.initUsersListener();
-	lobby.updateUserAttribute(`nonexistantUser`, `isHost`, true);
+	lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, true);
 });

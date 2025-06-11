@@ -29,29 +29,29 @@ function writeDisconnectCode(data) {
 		const { disconnectedUsers, users } = data;
 		// 1. First, check if the host is among the disconnected. This is the highest priority.
 		const isHostDisconnected = disconnectedUsers.some(user => isUserHost(user));
-        if (isHostDisconnected) {
-            resolve('hostDisconnected');
-            return; // Exit the function
-        }
+		if (isHostDisconnected) {
+			resolve('hostDisconnected');
+			return; // Exit the function
+		}
 
-        // 2. Next, check if removing these users would drop the lobby below the minimum required players.
-        const remainingUserCount = Object.keys(users).length - disconnectedUsers.length;
-        if (remainingUserCount < minGuests) {
-            resolve('notEnoughGuests');
-            return; // Exit the function
-        }
-        
-        // 3. If neither of the above is true, the default action is to remove the guests.
-        // We can add a sanity check here to ensure we have disconnected users to remove.
-        if (disconnectedUsers.length > 0) {
-            resolve('removeGuests');
-            return; // Exit the function
-        }
+		// 2. Next, check if removing these users would drop the lobby below the minimum required players.
+		const remainingUserCount = Object.keys(users).length - disconnectedUsers.length;
+		if (remainingUserCount < minGuests) {
+			resolve('notEnoughGuests');
+			return; // Exit the function
+		}
+		
+		// 3. If neither of the above is true, the default action is to remove the guests.
+		// We can add a sanity check here to ensure we have disconnected users to remove.
+		if (disconnectedUsers.length > 0) {
+			resolve('removeGuests');
+			return; // Exit the function
+		}
 
-        // This case should theoretically not be hit if handleDisconnectedUsers is working,
-        // but it's good practice to handle all paths.
-        reject(`writeDisconnectCode: a disconnect code should not be created for this situation; see data (${data}).`);
-    });
+		// This case should theoretically not be hit if handleDisconnectedUsers is working,
+		// but it's good practice to handle all paths.
+		reject(`writeDisconnectCode: a disconnect code should not be created for this situation; see data (${data}).`);
+	});
 }
 
 

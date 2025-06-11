@@ -12,6 +12,8 @@ class userSession {
 }
 
 function isUserHost(user) {
+	console.log(user);
+	console.log(user.host);
 	return user.host;
 }
 
@@ -28,12 +30,13 @@ function writeDisconnectCode(data) {
 	return new Promise(function (resolve, reject) {
 		const { disconnectedUsers, users } = data;
 		// 1. First, check if the host is among the disconnected. This is the highest priority.
-		console.log(user);
 		const isHostDisconnected = disconnectedUsers.some(user => isUserHost(user));
 		console.log(isHostDisconnected);
 		if (isHostDisconnected) {
 			resolve('hostDisconnected');
 			return; // Exit the function
+		} else {
+			
 		}
 
 		// 2. Next, check if removing these users would drop the lobby below the minimum required players.

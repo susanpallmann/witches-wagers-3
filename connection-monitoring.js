@@ -343,6 +343,7 @@ $(document).ready(function() {
 			} else {
 				console.log(`$(document).ready: user is signed out.`);
 				clearInterval(verificationInterval);
+				clearInterval(checkInterval);
 			}
 		});
 	})

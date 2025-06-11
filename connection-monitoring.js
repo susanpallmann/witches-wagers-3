@@ -422,14 +422,13 @@ class GameLobby {
 $(document).ready(function () {
 	let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
 	lobby.initConnectionStatusListener();
-	lobby.initUsersListener().then(() => {
-		lobby.updateUserAttribute(`testFakeUser`, `isHost`, true).then(() => {
-		}).catch((error) => {
-			lobby.logError(error);
-		});
-		lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, false).then(() => {
-		}).catch((error) => {
-			lobby.logError(error);
-		});
+	lobby.initUsersListener();
+	lobby.updateUserAttribute(`testFakeUser`, `isHost`, true).then(() => {
+	}).catch((error) => {
+		lobby.logError(error);
+	});
+	lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, false).then(() => {
+	}).catch((error) => {
+		lobby.logError(error);
 	});
 });

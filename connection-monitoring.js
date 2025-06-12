@@ -489,44 +489,51 @@ class GameLobby {
 		});
 	}
 	
-	constructor(host) {
+	constructor(host, config) {
 		this.database = getDatabase();
 		this.roomCode = this.generateRoomCode();
 		this.connection = {
 			connectionStatus: `lobbySetup`,
 			users: {}
-		}
+		};
+		this.config = config;
 	}
 }
 
+// Once everything is loaded
 $(document).ready(async function () {
-	//console.log(await signIn());
 	
+	// console.log(await signIn());
+	
+	// Set up a config variable with values we'll use for logic later
 	const config = {
 		ageAllowance: 60000,
 		minGuests: 2,
 		maxGuests: 8
 	};
 	
+	// Attempt to set up our client-side lobby object:
+	//     - populate it with initial values
+	//     - initialize our Firebase listeners for connectionStatus and connected users
+	//     - do something once it's all ready
 	try {
-		let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
 		
+		// Create a new client-side lobby object
+		let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, config);
+		
+		// Populate lobby object with values from Firebase, and then intialize listeners for connectionStatus and connected users
 		await lobby.fetchLobby();
 		
 		// Do things now that our lobby is ready
 		
-		lobby.updateUserAttribute(`testFakeUser`, `isHost`, true)
-		.then(() => {
-		}).catch((error) => {
-			lobby.logError(error);
-		});
-		
+		// Testing updating a user attribute
 		lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, false)
 		.then(() => {
 		}).catch((error) => {
 			lobby.logError(error);
 		});
 		
+	// Something went wrong setting up client-side lobby
 	} catch (error) {
 		console.log(`Document ready: failed to initialize game lobby: ${error.message}`);
 	}

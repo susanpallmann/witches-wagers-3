@@ -500,7 +500,7 @@ class GameLobby {
 }
 
 $(document).ready(async function () {
-	console.log(await signIn());
+	//console.log(await signIn());
 	
 	const config = {
 		ageAllowance: 60000,

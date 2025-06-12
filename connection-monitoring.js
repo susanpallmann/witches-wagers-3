@@ -458,7 +458,7 @@ $(document).ready(async function () {
 			lobby.logError(error);
 		});
 		
-		lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, false)
+		lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, true)
 		.then(() => {
 		}).catch((error) => {
 			lobby.logError(error);

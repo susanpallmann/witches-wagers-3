@@ -357,16 +357,12 @@ $(document).ready(function() {
 	});
 });
 */
-
-// GameLobby
 function signIn() {
 	return new Promise(function (resolve, reject) {
 		const auth = getAuth();
-		console.log(auth.currentUser.uid);
 		signInAnonymously(auth)
 		.then(() => {
-			console.log(auth.currentUser.uid);
-			resolve(auth);
+			resolve(auth.currentUser.uid);
 		})
 		.catch((error) => {
 			reject(`signIn | Firebase error: ${error.message}`);
@@ -408,6 +404,7 @@ class userSession {
 	}
 	
 	constructor() {
+		
 		this.uid;
 		this.authState;
 		this.lobby;
@@ -503,7 +500,7 @@ class GameLobby {
 }
 
 $(document).ready(async function () {
-	signIn();
+	console.log(await signIn());
 	
 	const config = {
 		ageAllowance: 60000,

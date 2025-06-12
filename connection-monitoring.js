@@ -416,13 +416,65 @@ class GameLobby {
 	
 	// Reusable method for logging errors.
 	logError(error) {
-		console.log(`GameLobby | ${error}`);
+		console.error(`GameLobby | ${error}`);
 	}
 	
 	// Generate a roomCode (currently always returns 'TEST')
 	// Later this will have more complex logic.
 	generateRoomCode() {
 		return `TEST`;
+	}
+	
+	async checkRoomCodeAvailability(roomCode) {
+		const roomCodeRef = ref(this.database, `rooms/${roomcode}`);
+		try {
+			const snapshot = await get(roomCodeRef);
+			
+			if (snapshot.exists()) {
+				
+				// TODO: check how old the lobby is
+				
+				// but for now, throw an error
+				this.logError(`checkForRoomCode | lobby directory for this roomCode (${roomCode}) was found in database.`);
+				throw new Error(`checkForRoomCode | lobby directory for this roomCode (${roomCode}) was found in database.`);
+				
+			} else {
+				// Consider the roomCode available, return true
+				return true;
+			}
+		} catch (error) {
+			this.logError(`fetchLobby | Firebase error: ${error.message}`);
+			throw error;
+		}
+	}
+	
+	async generateValidRoomCode() {
+		let roomCode;
+		let isAvailable = false;
+		let attempts - 0;
+		
+		const maxAttempts = 16;
+		
+		while (!isAvailable && attempts < maxAttempts) {
+			roomCode = this.generateRoomCode();
+			
+			try {
+				isAvailable = await this.checkRoomCodeAvailability(roomCode);
+				if (isAvailable) {
+					return roomCode;
+				} else {
+				}
+			} catch (error) {
+			this.logError(`generateValidRoomCode | ${error}`);
+			}
+			attempts++;
+		}
+		
+		if (!isAvailable) {
+			
+			this.logError(`generateValidRoomCode: Failed to generate an available room code after ${MAX_ATTEMPTS} attempts.`);
+			throw new Error(`generateValidRoomCode: Failed to generate an available room code after ${MAX_ATTEMPTS} attempts.`);
+		}
 	}
 	
 	// Start an onValue listener for the lobby's connectionStatus in Firebase
@@ -443,24 +495,19 @@ class GameLobby {
 		});
 	}
 	
-	async fetchLobby() {
-		const connectionRef = ref(this.database, `rooms/${this.roomCode}/connection`);
+	async fetchLobbyData() {
+		const lobbyRef = ref(this.database, `rooms/${this.roomCode}`);
 		try {
-			const snapshot = await get(connectionRef);
+			const snapshot = await get(lobbyRef);
 			
 			if (snapshot.exists()) {
 				
 				const data = snapshot.val();
-				
-				this.connection.connectionStatus = data.connectionStatus;
-				this.connection.users = data.users;
-				
-				this.initConnectionStatusListener();
-				this.initUsersListener();
+				return data;
 				
 			} else {
-				this.logError(`fetchLobby | Connection information for this room (${this.roomCode}) was not found in database.`);
-				throw new Error(`Lobby connection ref not found.`);
+				this.logError(`fetchLobby | No data exists for this roomCode (${this.roomCode}).`);
+				throw new Error(`fetchLobby | No data exists for this roomCode (${this.roomCode}).`);
 			}
 		} catch (error) {
 			this.logError(`fetchLobby | Firebase error: ${error.message}`);
@@ -489,14 +536,41 @@ class GameLobby {
 		});
 	}
 	
-	constructor(host, config) {
-		this.database = getDatabase();
-		this.roomCode = this.generateRoomCode();
+	constructor(database, host, config) {
+		this.database = database;
+		this.roomCode;
 		this.connection = {
-			connectionStatus: `lobbySetup`,
+			connectionStatus: 'lobbySetup',
 			users: {}
 		};
 		this.config = config;
+	}
+	
+	static async create(database, host, config) {
+		
+		// Create and set up lobby
+		try {
+			
+			// Create lobby instance
+			let lobby = new GameLobby(database, host, config);
+			
+			// Do async things for setup
+			// Generate a valid roomCode and assign it to the instance
+			lobby.roomCode = await lobby.generateValidRoomCode();
+			
+			let lobbyData = await lobby.fetchLobbyData();
+			lobby.connection = lobbyData.connection;
+			
+			await lobby.initConnectionStatusListener();
+			await lobby.initUsersListener();
+			
+			// Return set up lobby
+			return lobby;
+		
+		// Send an error to the console if for some reason this failed.
+		} catch (error) {
+			this.logError(`GameLobby | create: error creating or setting up GameLobby: ${error.message}`);
+		}
 	}
 }
 
@@ -517,12 +591,11 @@ $(document).ready(async function () {
 	//     - initialize our Firebase listeners for connectionStatus and connected users
 	//     - do something once it's all ready
 	try {
+		let USERIDTEST = await signIn()
+		console.log(USERIDTEST);
 		
 		// Create a new client-side lobby object
-		let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, config);
-		
-		// Populate lobby object with values from Firebase, and then intialize listeners for connectionStatus and connected users
-		await lobby.fetchLobby();
+		let lobby = await GameLobby.create(database, `8OVqx8U1FlRC0RMGHyrBF7LzJk12`, config);
 		
 		// Do things now that our lobby is ready
 		

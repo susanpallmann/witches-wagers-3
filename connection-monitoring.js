@@ -357,9 +357,7 @@ $(document).ready(function() {
 	});
 });
 */
-// GameLobby
-// GameLobby
-signIn() {
+function signIn() {
 	return new Promise(function (resolve, reject) {
 		const auth = getAuth();
 		signInAnonymously(auth)

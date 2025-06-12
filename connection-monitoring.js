@@ -357,12 +357,11 @@ $(document).ready(function() {
 	});
 });
 */
-
-class userSession {
+class UserSession {
 	
 	// Reusable method for logging errors.
 	logError(error) {
-		console.log(`userSession | ${error}`);
+		console.error(`userSession | ${error}`);
 	}
 	
 	async verifySession() {
@@ -391,12 +390,10 @@ class userSession {
 	}
 	
 	constructor(config) {
-		
+		this.config = config;
 		this.uid;
-		this.authState;
 		this.lobby;
 		this.verifySessionInterval;
-		this.config = config;
 	}
 	
 	getAuthFromSignIn() {
@@ -585,13 +582,10 @@ class GameLobby {
 	}
 	
 	constructor(database, host, config) {
+		this.config = config;
 		this.database = database;
 		this.roomCode;
-		this.connection = {
-			connectionStatus: 'lobbySetup',
-			users: {}
-		};
-		this.config = config;
+		this.connection = {};
 	}
 	
 	static async create(database, host, config) {
@@ -645,6 +639,9 @@ $(document).ready(async function () {
 		// Do things now that our lobby is ready
 		userSession.assignLobby(lobby);
 		userSession.initVerifySessionCadence();
+		
+		console.log(lobby);
+		console.log(userSession);
 		
 		// Testing updating a user attribute
 		lobby.updateUserAttribute(userSession.uid, `isHost`, false)

@@ -357,6 +357,7 @@ $(document).ready(function() {
 	});
 });
 */
+// GameLobby
 class GameLobby {
 	
 	logError(error) {
@@ -385,14 +386,17 @@ class GameLobby {
 	
 	async fetchLobby() {
 		const connectionRef = ref(this.database, `rooms/${this.roomCode}/connection`);
-		get(connectionRef, ((snapshot) => {
-			this.connection.connectionStatus = snapshot.val().connectionStatus;
-			this.connection.users = snapshot.val().users;
-		})
-		.then(() {
-			this.initConnectionStatusListener();
-            this.initUsersListener();
-			return true;
+		get(connectionRef)
+		.then((snapshot) {
+			if (snapshot.exists()) {
+				this.connection.connectionStatus = snapshot.val().connectionStatus;
+				this.connection.users = snapshot.val().users;
+				this.initConnectionStatusListener();
+				this.initUsersListener();
+				return true;
+			} else {
+				this.logError(`GameLobby | fetchLobby | lobby doesn't exist.`);
+			}
 		}).catch((error) => {
 			this.logError(`GameLobby | fetchLobby | Firebase error: ${error}`);
 		});

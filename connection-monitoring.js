@@ -383,6 +383,21 @@ class GameLobby {
 		});
 	}
 	
+	async fetchLobby() {
+		const connectionRef = ref(this.database, `rooms/${this.roomCode}/connection`);
+		get(connectionRef, ((snapshot) => {
+			this.connection.connectionStatus = snapshot.val().connectionStatus;
+			this.connection.users = snapshot.val().users;
+		})
+		.then(() {
+			this.initConnectionStatusListener();
+            this.initUsersListener();
+			return true;
+		}).catch((error) => {
+			this.logError(`GameLobby | fetchLobby | Firebase error: ${error}`);
+		});
+	}
+	
 	checkForUser(uid) {
 		if (uid in this.connection.users) {
 			console.log(uid);
@@ -422,19 +437,24 @@ class GameLobby {
 	}
 }
 
-const delay = ms => new Promise(res => setTimeout(res, ms));
-
 $(document).ready(async function () {
-	let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
-	lobby.initConnectionStatusListener();
-	lobby.initUsersListener();
-	await delay(5000);
-	lobby.updateUserAttribute(`testFakeUser`, `isHost`, true).then(() => {
-	}).catch((error) => {
-		lobby.logError(error);
-	});
-	lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, false).then(() => {
-	}).catch((error) => {
-		lobby.logError(error);
-	});
+	try {
+		let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
+		
+		await lobby.initialFetch();
+		
+		lobby.updateUserAttribute(`testFakeUser`, `isHost`, true)
+		.then(() => {
+		}).catch((error) => {
+			lobby.logError(error);
+		});
+		
+		lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, false)
+		.then(() => {
+		}).catch((error) => {
+			lobby.logError(error);
+		});
+	} catch (error) {
+		console.log(`Document ready: failed to initialize game lobby: ${error}`);
+	}
 });

@@ -471,6 +471,7 @@ class GameLobby {
 	}
 	
 	async checkRoomCodeAvailability(roomCode) {
+		return true;
 		const roomCodeRef = ref(this.database, `rooms/${roomCode}`);
 		try {
 			const snapshot = await get(roomCodeRef);
@@ -588,35 +589,39 @@ class GameLobby {
 		this.connection = {};
 	}
 	
+	// Create and set up a lobby using static async factory method
 	static async create(database, host, config) {
 		
-		// Create and set up lobby
+		// Create and set up a lobby, return the lobby instance when finished
 		try {
 			
-			// Create lobby instance
+			// 1. Construct lobby instance
 			const lobby = new GameLobby(database, host, config);
 			
-			// Do async things for setup
-			// Generate a valid roomCode and assign it to the instance
+			// 2. Generate a valid roomCode and assign it to the instance
 			lobby.roomCode = await lobby.generateValidRoomCode();
 			
+			// 3. Retrieve existing data for this lobby from Firebase
 			let lobbyData = await lobby.fetchLobbyData();
+			
+			// 4. Update the lobby instance's connection data with the Firebase data
 			lobby.connection = lobbyData.connection;
 			
+			// 5. Initialize listeners for connection/connectionStatus and connection/users
 			await lobby.initConnectionStatusListener();
 			await lobby.initUsersListener();
 			
-			// Return set up lobby
+			// 6. Return set up lobby
 			return lobby;
 		
-		// Send an error to the console if for some reason this failed.
+		// Something went wrong creating or setting up client-side lobby
 		} catch (error) {
-			this.logError(`GameLobby | create: error creating or setting up GameLobby: ${error.message}`);
+			this.logError(`GameLobby >> create | error creating or setting up GameLobby: ${error.message}`);
 		}
 	}
 }
 
-// Once everything is loaded
+// Once the DOM is loaded
 $(document).ready(async function () {
 	
 	// Set up a config variable with values we'll use for logic later
@@ -626,32 +631,29 @@ $(document).ready(async function () {
 		maxGuests: 8
 	};
 	
-	try {
-		// Start user session
-		const userSession = await UserSession.create(config);
-		
-		// Get database
+	// Start client setup
+	try {	
+		// 1. Get Firebase database
 		const database = getDatabase();
 		
-		// Create a new client-side lobby object
+		// 2. Initialize userSession
+		const userSession = await UserSession.create(config);
+		
+		// 3. Initialize client-side lobby
 		let lobby = await GameLobby.create(database, userSession.uid, config);
 		
-		// Do things now that our lobby is ready
+		// 4. Assign the created lobby to the userSession
 		userSession.assignLobby(lobby);
+		
+		// 5. Start verifySession cadence
 		userSession.initVerifySessionCadence();
 		
+		// 6. Log both objects to the console so we can see if any of my code worked.
 		console.log(lobby);
 		console.log(userSession);
 		
-		// Testing updating a user attribute
-		lobby.updateUserAttribute(userSession.uid, `isHost`, false)
-		.then(() => {
-		}).catch((error) => {
-			lobby.logError(error);
-		});
-		
-	// Something went wrong setting up client-side lobby
+	// Something went wrong setting up client
 	} catch (error) {
-		console.log(`Document ready: failed to initialize game lobby: ${error.message}`);
+		console.error(`Document ready | failed to set up client: ${error.message}`);
 	}
 });

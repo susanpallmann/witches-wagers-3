@@ -357,59 +357,6 @@ $(document).ready(function() {
 	});
 });
 */
-function signIn() {
-	return new Promise(function (resolve, reject) {
-		const auth = getAuth();
-		signInAnonymously(auth)
-		.then(() => {
-			console.log(auth.currentUser);
-			resolve(auth);
-		})
-		.catch((error) => {
-			reject(`signIn | Firebase error: ${error.message}`);
-		});
-	});
-}
-
-
-class userSession {
-	
-	// Reusable method for logging errors.
-	logError(error) {
-		console.log(`userSession | ${error}`);
-	}
-	
-	async verifySession() {
-		try {
-			const userExists = this.lobby.checkForUser(this.uid);
-			
-			if (!userExists) {
-				this.logError(`verifySession: user with uid (${this.uid}) was not found in lobby.`);
-				throw new Error(`verifySession: user with uid (${this.uid}) was not found in lobby.`);
-			}
-			
-			const currentTimestamp = Date.now();
-			
-			await this.lobby.updateUserAttribute(this.uid, 'lastVerified', currentTimestamp);
-				
-			return true;
-			
-		} catch (error) {
-			this.logError(`verifySession: ${error}`);
-			throw error;
-		}
-	}
-	
-	assignLobby(lobby) {
-		this.lobby = lobby;
-	}
-	
-	constructor() {
-		this.uid;
-		this.authState;
-		this.lobby;
-	}
-}
 
 // GameLobby
 function signIn() {

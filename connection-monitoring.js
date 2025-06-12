@@ -359,6 +359,61 @@ $(document).ready(function() {
 */
 // GameLobby
 // GameLobby
+signIn() {
+	return new Promise(function (resolve, reject) {
+		const auth = getAuth();
+		signInAnonymously(auth)
+		.then(() => {
+			console.log(auth.currentUser);
+			resolve(auth);
+		})
+		.catch((error) => {
+			reject(`signIn | Firebase error: ${error.message}`);
+		});
+	});
+}
+
+
+class userSession {
+	
+	// Reusable method for logging errors.
+	logError(error) {
+		console.log(`userSession | ${error}`);
+	}
+	
+	async verifySession() {
+		try {
+			const userExists = this.lobby.checkForUser(this.uid);
+			
+			if (!userExists) {
+				this.logError(`verifySession: user with uid (${this.uid}) was not found in lobby.`);
+				throw new Error(`verifySession: user with uid (${this.uid}) was not found in lobby.`);
+			}
+			
+			const currentTimestamp = Date.now();
+			
+			await this.lobby.updateUserAttribute(this.uid, 'lastVerified', currentTimestamp);
+				
+			return true;
+			
+		} catch (error) {
+			this.logError(`verifySession: ${error}`);
+			throw error;
+		}
+	}
+	
+	assignLobby(lobby) {
+		this.lobby = lobby;
+	}
+	
+	constructor() {
+		this.uid;
+		this.authState;
+		this.lobby;
+	}
+}
+
+// GameLobby
 class GameLobby {
 	
 	// Reusable method for logging errors.
@@ -407,7 +462,7 @@ class GameLobby {
 				
 			} else {
 				this.logError(`fetchLobby | Connection information for this room (${this.roomCode}) was not found in database.`);
-				throw new Error('Lobby connection ref not found.');
+				throw new Error(`Lobby connection ref not found.`);
 			}
 		} catch (error) {
 			this.logError(`fetchLobby | Firebase error: ${error.message}`);
@@ -447,10 +502,20 @@ class GameLobby {
 }
 
 $(document).ready(async function () {
+	signIn();
+	
+	const config = {
+		ageAllowance: 60000,
+		minGuests: 2,
+		maxGuests: 8
+	};
+	
 	try {
 		let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
 		
 		await lobby.fetchLobby();
+		
+		// Do things now that our lobby is ready
 		
 		lobby.updateUserAttribute(`testFakeUser`, `isHost`, true)
 		.then(() => {
@@ -458,7 +523,7 @@ $(document).ready(async function () {
 			lobby.logError(error);
 		});
 		
-		lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, true)
+		lobby.updateUserAttribute(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`, `isHost`, false)
 		.then(() => {
 		}).catch((error) => {
 			lobby.logError(error);

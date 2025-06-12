@@ -358,16 +358,21 @@ $(document).ready(function() {
 });
 */
 // GameLobby
+// GameLobby
 class GameLobby {
 	
+	// Reusable method for logging errors.
 	logError(error) {
-		console.log(error);
+		console.log(`GameLobby | ${error}`);
 	}
 	
+	// Generate a roomCode (currently always returns 'TEST')
+	// Later this will have more complex logic.
 	generateRoomCode() {
 		return `TEST`;
 	}
 	
+	// Start an onValue listener for the lobby's connectionStatus in Firebase
 	initConnectionStatusListener() {
 		let connectionStatusRef = ref(this.database, `rooms/${this.roomCode}/connection/connectionStatus`);
 		onValue(connectionStatusRef, (snapshot) => {
@@ -376,57 +381,57 @@ class GameLobby {
 		});
 	}
 	
+	// Start an onValue listener for the lobby's users in Firebase
 	initUsersListener() {
 		let usersRef = ref(this.database, `rooms/${this.roomCode}/connection/users`);
 		onValue(usersRef, (snapshot) => {
-			this.users = snapshot.val();
-			console.log(this.users);
+			this.connection.users = snapshot.val();
+			console.log(this.connection.users);
 		});
 	}
 	
 	async fetchLobby() {
 		const connectionRef = ref(this.database, `rooms/${this.roomCode}/connection`);
-		get(connectionRef)
-		.then((snapshot) {
+		try {
+			const snapshot = await get(connectionRef);
+			
 			if (snapshot.exists()) {
-				this.connection.connectionStatus = snapshot.val().connectionStatus;
-				this.connection.users = snapshot.val().users;
+				
+				const data = snapshot.val();
+				
+				this.connection.connectionStatus = data.connectionStatus;
+				this.connection.users = data.users;
+				
 				this.initConnectionStatusListener();
 				this.initUsersListener();
-				return true;
+				
 			} else {
-				this.logError(`GameLobby | fetchLobby | lobby doesn't exist.`);
+				this.logError(`fetchLobby | Connection information for this room (${this.roomCode}) was not found in database.`);
+				throw new Error('Lobby connection ref not found.');
 			}
-		}).catch((error) => {
-			this.logError(`GameLobby | fetchLobby | Firebase error: ${error}`);
-		});
+		} catch (error) {
+			this.logError(`fetchLobby | Firebase error: ${error.message}`);
+			throw error;
+		}
 	}
 	
 	checkForUser(uid) {
-		if (uid in this.connection.users) {
-			console.log(uid);
-			console.log(this.connection.users);
-			return true;
-		} else {
-			return false;
-		}
+		return this.connection.users && uid in this.connection.users;
 	}
 	
 	updateUserAttribute(uid, attribute, data) {
 		return new Promise((resolve, reject) => {
 			if (this.checkForUser(uid)) {
-				let userRef = ref(this.database, `rooms/${this.roomCode}/connection/users/${uid}`);
-				let newData = {};
-				newData[attribute] = data;
+				const userRef = ref(this.database, `rooms/${this.roomCode}/connection/users/${uid}`);
+				const newData = { [attribute]: data };
+				
 				update(userRef, newData)
-				.then(() => {
-					resolve(true);
-				}).catch((error) => {
-					reject(error);
-				});
+				.then(() => resolve(true))
+				.catch((error) => reject(error));
+				
 			} else {
-				console.log(this.connection.users);
-				reject(`GameLobby | updateUserAttribute: uid (${uid}) was not found in users (${this.connection.users}).`);
+				const usersList = JSON.stringify(this.connection.users, null, 2);
+				reject(`updateUserAttribute: uid (${uid}) was not found in users (${usersList}).`);
 			}
 		});
 	}
@@ -445,7 +450,7 @@ $(document).ready(async function () {
 	try {
 		let lobby = new GameLobby(`8OVqx8U1FlRC0RMGHyrBF7LzJk12`);
 		
-		await lobby.initialFetch();
+		await lobby.fetchLobby();
 		
 		lobby.updateUserAttribute(`testFakeUser`, `isHost`, true)
 		.then(() => {
@@ -458,7 +463,8 @@ $(document).ready(async function () {
 		}).catch((error) => {
 			lobby.logError(error);
 		});
+		
 	} catch (error) {
-		console.log(`Document ready: failed to initialize game lobby: ${error}`);
+		console.log(`Document ready: failed to initialize game lobby: ${error.message}`);
 	}
 });

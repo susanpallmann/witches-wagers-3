@@ -362,6 +362,7 @@ $(document).ready(function() {
 function signIn() {
 	return new Promise(function (resolve, reject) {
 		const auth = getAuth();
+		console.log(auth.currentUser.uid);
 		signInAnonymously(auth)
 		.then(() => {
 			console.log(auth.currentUser.uid);

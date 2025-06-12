@@ -357,6 +357,21 @@ $(document).ready(function() {
 	});
 });
 */
+// UserSession
+	// Attributes:
+		// config
+		// uid
+		// lobby
+		// verifySessionInterval
+	// Methods:
+		// logError
+		// assignLobby
+		// initVerifySessionCadence
+			// verifySession
+		// create
+			// constructor
+			// getAuthFromSignIn - used in create
+			// authStateListener - used in create
 class UserSession {
 	
 	// Reusable method for logging errors.
@@ -457,6 +472,29 @@ class UserSession {
 }
 
 // GameLobby
+	// Attributes:
+		// config
+		// database
+		// roomCode
+		// connection
+			// connectionStatus
+			// users
+				// $user
+					// isHost
+					// joinOrder
+					// lastVerified
+	// Methods:
+		// logError
+		// checkForUser
+		// updateUserAttribute	
+		// create
+			// constructor
+			// generateValidRoomCode
+				// generateRoomCode
+				// checkRoomCodeAvailability
+			// getLobbyData
+			// initConnectionStatusListener
+			// initUsersListener
 class GameLobby {
 	
 	// Reusable method for logging errors.
@@ -541,7 +579,7 @@ class GameLobby {
 		});
 	}
 	
-	async fetchLobbyData() {
+	async getLobbyData() {
 		const lobbyRef = ref(this.database, `rooms/${this.roomCode}`);
 		try {
 			const snapshot = await get(lobbyRef);
@@ -602,7 +640,7 @@ class GameLobby {
 			lobby.roomCode = await lobby.generateValidRoomCode();
 			
 			// 3. Retrieve existing data for this lobby from Firebase
-			let lobbyData = await lobby.fetchLobbyData();
+			let lobbyData = await lobby.getLobbyData();
 			
 			// 4. Update the lobby instance's connection data with the Firebase data
 			lobby.connection = lobbyData.connection;

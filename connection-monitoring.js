@@ -451,7 +451,7 @@ class GameLobby {
 	async generateValidRoomCode() {
 		let roomCode;
 		let isAvailable = false;
-		let attempts - 0;
+		let attempts = 0;
 		
 		const maxAttempts = 16;
 		

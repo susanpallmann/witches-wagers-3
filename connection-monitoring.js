@@ -357,6 +357,7 @@ $(document).ready(function() {
 	});
 });
 */
+
 // ========================================
 // ** FUNCTION: Error handling **
 // ========================================
@@ -506,7 +507,7 @@ class GameLobby {
 		this.database = database;
 		this.roomCode;
 		this.connection = {
-			connectionCode: 'lobbySetup',
+			connectionStatus: 'lobbySetup',
 			users: {}
 		};
 	}

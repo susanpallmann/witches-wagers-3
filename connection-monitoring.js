@@ -555,7 +555,7 @@ class GameLobby {
 		console.error(`GameLobby | ${error}`);
 	}
 	
-	addLobby() {
+	async addLobby() {
 		return new Promise((resolve, reject) => {
 			const roomRef = ref(this.database, `rooms/${this.roomCode}`);
 			try {

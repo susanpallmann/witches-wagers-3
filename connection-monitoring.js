@@ -357,7 +357,6 @@ $(document).ready(function() {
 	});
 });
 */
-
 // ========================================
 // ** FUNCTION: Error handling **
 // ========================================
@@ -502,7 +501,7 @@ class UserSession {
 class GameLobby {
 	 // Attributes: config, database, roomCode, connection
 	
-	constructor(database, host, config) {
+	constructor(database, config) {
 		this.config = config;
 		this.database = database;
 		this.roomCode;

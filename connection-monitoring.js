@@ -372,36 +372,6 @@ $(document).ready(function() {
 			// constructor
 			// getAuthFromSignIn - used in create
 			// authStateListener - used in create
-// UserSession
-	// Attributes:
-		// config
-		// uid
-		// lobby
-		// verifySessionInterval
-	// Methods:
-		// logError
-		// assignLobby
-		// initVerifySessionCadence
-			// verifySession
-		// create
-			// constructor
-			// getAuthFromSignIn - used in create
-			// authStateListener - used in create
-// UserSession
-	// Attributes:
-		// config
-		// uid
-		// lobby
-		// verifySessionInterval
-	// Methods:
-		// logError
-		// assignLobby
-		// initVerifySessionCadence
-			// verifySession
-		// create
-			// constructor
-			// getAuthFromSignIn - used in create
-			// authStateListener - used in create
 class UserSession {
 	
 	// Reusable method for logging errors.
@@ -768,6 +738,7 @@ async function initializeLobbyAsHost(database, userSession, lobby, config) {
 			let addedUser = await lobby.addUser(createUser);
 		}
 		
+		return lobby;
 	// Something went wrong setting up client
 	} catch (error) {
 		console.error(`InitializeLobbyAsHost | failed to set up client: ${error.message}`);
@@ -783,14 +754,17 @@ $(document).ready(async function () {
 		minGuests: 2,
 		maxGuests: 8
 	};
+	let database;
+	let userSession;
+	let lobby;
 	try {
 		// 1. Start client setup, getting our database and creating a userSession instance
 		try {	
 			// A. Get Firebase database
-			const database = getDatabase();
+			database = getDatabase();
 			
 			// B. Initialize userSession
-			const userSession = await UserSession.create(config);
+			userSession = await UserSession.create(config);
 			
 		// Something went wrong setting up client
 		} catch (error) {
@@ -800,7 +774,7 @@ $(document).ready(async function () {
 		$('#create-lobby').click(async function(database, userSession, lobby, config) {
 			try {
 				// 1. Initialize lobby (for host only)
-				initializeLobbyAsHost(database, userSession, config);
+				lobby = initializeLobbyAsHost(database, userSession, config);
 				
 				// 2. Start verifySession cadence for the user
 				userSession.initVerifySessionCadence();

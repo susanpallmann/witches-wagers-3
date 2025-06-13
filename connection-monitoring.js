@@ -357,7 +357,6 @@ $(document).ready(function() {
 	});
 });
 */
-
 // ========================================
 // ** FUNCTION: Error handling **
 // ========================================
@@ -667,18 +666,17 @@ class GameLobby {
 		let connectionStatusRef = ref(this.database, `rooms/${this.roomCode}/connection/connectionStatus`);
 		onValue(connectionStatusRef, (snapshot) => {
 			this.connection.connectionStatus = snapshot.val();
-			console.log(this.connection.connectionStatus);
 		});
 	}
 	
 	// Start an onValue listener for the lobby's users in Firebase
 	initUsersListener() {
-		let usersRef = ref(this.database, `rooms/${this.roomCode}/connection/users`);
-		onValue(usersRef, (snapshot) => {
-			this.connection.users = snapshot.val();
-			console.log(this.connection.users);
-		});
-	}
+        let usersRef = ref(this.database, `rooms/${this.roomCode}/connection/users`);
+        onValue(usersRef, (snapshot) => {
+            this.connection.users = snapshot.val() || {};
+        });
+    }
+
 	
 	// Load existing data from the lobby's Firebase reference
 	// Returns data snapshot if successful
@@ -745,6 +743,10 @@ class GameLobby {
 			// 3. Create the lobby in Firebase if a roomCode wasn't provided
 			if (!roomCode) {
 				await lobby.addLobby();
+			} else {
+				const currentLobbyData = await lobby.getLobbyData();
+                lobby.connection = currentLobbyData.connection || { connectionStatus: 'lobbySetup', users: {} };
+				lobby.connection.users = lobby.connection.users || {};
 			}
             
             // 4. Listen for realtime updates (no need to fetch separately)

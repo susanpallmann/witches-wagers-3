@@ -563,7 +563,7 @@ class GameLobby {
 					connection: {
 						connectionStatus: this.connection.connectionStatus,
 						users: {}
-					}
+					},
 					dateCreated: Date.now()
 				};
 				await set(roomRef, lobbyData);

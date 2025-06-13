@@ -387,6 +387,21 @@ $(document).ready(function() {
 			// constructor
 			// getAuthFromSignIn - used in create
 			// authStateListener - used in create
+// UserSession
+	// Attributes:
+		// config
+		// uid
+		// lobby
+		// verifySessionInterval
+	// Methods:
+		// logError
+		// assignLobby
+		// initVerifySessionCadence
+			// verifySession
+		// create
+			// constructor
+			// getAuthFromSignIn - used in create
+			// authStateListener - used in create
 class UserSession {
 	
 	// Reusable method for logging errors.
@@ -731,7 +746,7 @@ class GameLobby {
 	}
 }
 
-async function initializeLobbyAsHost(database, userSession, config) {
+async function initializeLobbyAsHost(database, userSession, lobby, config) {
 	// Initialize lobby as host
 	try {	
 		

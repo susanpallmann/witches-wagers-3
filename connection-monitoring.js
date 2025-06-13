@@ -372,21 +372,6 @@ $(document).ready(function() {
 			// constructor
 			// getAuthFromSignIn - used in create
 			// authStateListener - used in create
-// UserSession
-	// Attributes:
-		// config
-		// uid
-		// lobby
-		// verifySessionInterval
-	// Methods:
-		// logError
-		// assignLobby
-		// initVerifySessionCadence
-			// verifySession
-		// create
-			// constructor
-			// getAuthFromSignIn - used in create
-			// authStateListener - used in create
 class UserSession {
 	
 	// Reusable method for logging errors.
@@ -531,8 +516,9 @@ class GameLobby {
 
 		} else {
 			for (let user in this.connection.users) {
-				if (user.isVIP === true) {
+				if (this.connection.users[user].isVIP === true) {
 					isVIP = false;
+					break;
 				}
 			}
 		}
@@ -549,11 +535,18 @@ class GameLobby {
 	
 	addUser(user) {
 		return new Promise((resolve, reject) => {
+			const uid = Object.keys(user)[0];
+			if (!uid) {
+				return reject(new Error("addUser: User object must contain a UID as its key."));
+			}
 			const userRef = ref(this.database, `rooms/${this.roomCode}/connection/users/${uid}`);
-			
-			set(userRef, user)
-			.then(() => resolve(true))
-			.catch((error) => reject(error));
+			try {
+				set(userRef, user[uid]);
+				resolve(true);
+			} catch (error) {
+				this.logError(`addUser | Firebase error: ${error.message}`);
+				reject(error);
+			}
 		});
 	}
 	
@@ -564,11 +557,21 @@ class GameLobby {
 	
 	addLobby() {
 		return new Promise((resolve, reject) => {
-			const roomRef = ref(this.database, `rooms/${this.roomCode}/connection`);
-			
-			set(roomRef, this.connection)
-			.then(() => resolve(true))
-			.catch((error) => reject(error));
+			const roomRef = ref(this.database, `rooms/${this.roomCode}`);
+			try {
+				const lobbyData = {
+					connection: {
+						connectionStatus: this.connection.connectionStatus,
+						users: {}
+					}
+					dateCreated: Date.now()
+				};
+				await set(roomRef, lobbyData);
+				resolve(true);
+			} catch (error) {
+				this.logError(`addLobby | Firebase error: ${error.message}`);
+				reject(error);
+			}	
 		});
 	}
 	
@@ -694,7 +697,8 @@ class GameLobby {
 		this.database = database;
 		this.roomCode;
 		this.connection = {
-			connectionCode: lobbySetup
+			connectionCode: 'lobbySetup',
+			users: {}
 		};
 	}
 	
@@ -795,7 +799,7 @@ $(document).ready(async function () {
 				console.log(userSession);
 				console.log(userSession.uid);
 				// 1. Initialize lobby (for host only)
-				lobby = initializeLobbyAsHost(database, userSession, config);
+				lobby = await initializeLobbyAsHost(database, userSession, config);
 				
 				// 2. Start verifySession cadence for the user
 				userSession.initVerifySessionCadence();

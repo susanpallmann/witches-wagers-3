@@ -372,6 +372,21 @@ $(document).ready(function() {
 			// constructor
 			// getAuthFromSignIn - used in create
 			// authStateListener - used in create
+// UserSession
+	// Attributes:
+		// config
+		// uid
+		// lobby
+		// verifySessionInterval
+	// Methods:
+		// logError
+		// assignLobby
+		// initVerifySessionCadence
+			// verifySession
+		// create
+			// constructor
+			// getAuthFromSignIn - used in create
+			// authStateListener - used in create
 class UserSession {
 	
 	// Reusable method for logging errors.
@@ -724,11 +739,11 @@ async function initializeLobbyAsHost(database, userSession, config) {
 		
 		// 1. Initialize client-side lobby
 		let lobby = await GameLobby.create(database, userSession.uid, config);
-		
+		console.log('1 worked');
 		// 2. Assign the created lobby to the userSession
 		userSession.assignLobby(lobby);
-		
-		// 3. Check is user is already in this lobby
+		console.log('2 worked');
+		// 3. Check if user is already in this lobby
 		if (lobby.checkForUser(userSession.uid)) {
 			// TODO, put real error here
 			console.log('this user is in the lobby already');
@@ -739,6 +754,7 @@ async function initializeLobbyAsHost(database, userSession, config) {
 			// 5. Add that user to the lobby
 			let addedUser = await lobby.addUser(createUser);
 		}
+		console.log('3 worked');
 		
 		return lobby;
 	// Something went wrong setting up client

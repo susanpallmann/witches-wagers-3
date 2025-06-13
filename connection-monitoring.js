@@ -374,9 +374,10 @@ function logError(context, error) {
 class UserSession {
 	// Attributes: config, uid, lobby, verifySessionInterval
 	
-	constructor(config) {
+	constructor(config, username) {
 		this.config = config;
 		this.uid;
+		this.username;
 		this.lobby;
 		this.verifySessionInterval;
 	}
@@ -733,16 +734,18 @@ class GameLobby {
     }
 	
 	// Create and set up a lobby using static async factory method
-	static async create(database, config) {
+	static async create(database, config, roomCode) {
         try {
             // 1. Construct lobby instance
             const lobby = new GameLobby(database, config);
             
-            // 2. Generate a valid roomCode and assign it
-            lobby.roomCode = await lobby.generateValidRoomCode();
+            // 2. If a roomCode was provided, fill it, or else generate a valid roomCode and assign it
+            lobby.roomCode = roomCode ? roomCode : await lobby.generateValidRoomCode();
             
-            // 3. Create the lobby in Firebase
-            await lobby.addLobby();
+			// 3. Create the lobby in Firebase if a roomCode wasn't provided
+			if (!roomCode) {
+				await lobby.addLobby();
+			}
             
             // 4. Listen for realtime updates (no need to fetch separately)
             lobby.initConnectionStatusListener();
@@ -763,26 +766,56 @@ class GameLobby {
 // ** FUNCTION: Initialization logic **
 // ========================================
 
+async function joinExistingLobby(database, userSession, config, roomCode) {
+    try {
+        // 1. Check if the roomCode actually exists in the database
+        const roomCodeRef = ref(database, `rooms/${roomCode}`);
+        const snapshot = await get(roomCodeRef);
+
+        if (!snapshot.exists()) {
+            throw new Error(`Lobby with room code (${roomCode}) does not exist.`);
+        }
+
+        // 2. Initialize client-side lobby with the provided roomCode
+        const lobby = await GameLobby.create(database, config, roomCode);
+
+        // 3. Assign the created lobby to the userSession
+        userSession.assignLobby(lobby);
+
+        // 4. Create a user object for the joining user (isHost will be false)
+        const newUser = lobby.createUser(userSession.uid);
+
+        // 5. Add that user to the lobby
+        await lobby.addUser(newUser);
+
+        return lobby;
+
+    } catch (error) {
+        logError('joinExistingLobby', error);
+        throw error;
+    }
+}
+
 async function initializeLobbyAsHost(database, userSession, config) {
     try {
 		
         // 1. Initialize client-side lobby
-        const lobby = await GameLobby.create(database, config);
+        const lobby = await GameLobby.create(database, config, null);
         
         // 2. Assign the created lobby to the userSession
         userSession.assignLobby(lobby);
         
         // 3. Create a user object for the host
-        const hostUser = lobby.createUser(userSession.uid);
+        const newUser = lobby.createUser(userSession.uid);
         
         // 4. Add that user to the lobby
-        await lobby.addUser(hostUser);
+        await lobby.addUser(newUser);
         
         return lobby;
 		
 	// Log the error and re-throw
     } catch (error) {
-        logError('initializeLobbyAsHost', error);
+        logError('initializeLobby', error);
         throw error;
     }
 }
@@ -823,9 +856,53 @@ $(document).ready(async function() {
 
             } catch (error) {
 				
-                // Display an alert if lobby creation failes
+                // Display an alert if lobby creation fails
                 logError('create-lobby.click', error);
                 alert(`Failed to create lobby: ${error.message}`);
+				
+                // Re-enable the button so that the user can try again
+                $(this).prop('disabled', false);
+            }
+        });
+		
+		// Once client is set up, allow lobby joining
+        $('#join-lobby').click(async function() {
+			let roomCode = $('#room-code-input').val();
+			let username = $('#name-input').val();
+			
+			// Basic validation for roomCode and username
+            if (!roomCode) {
+                alert("Please enter a room code.");
+                return;
+            }
+            if (!username) {
+                alert("Please enter a username.");
+                return;
+            }
+			
+            try {
+                // 1. Disable button to prevent multiple clicks
+                $(this).prop('disabled', true);
+
+                // 2. Join the existing lobby
+                const lobby = await joinExistingLobby(database, userSession, config, roomCode);
+                
+				// 3. Add username to the user's data in the lobby
+                await lobby.updateUserAttribute(userSession.uid, 'username', username);
+				
+                // 4. Start verifySession cadence for the user
+                userSession.initVerifySessionCadence();
+                
+                // 5. Log for debugging and update UI
+                console.log("Lobby joined successfully:", lobby);
+                console.log("User session is active:", userSession);
+                alert(`Lobby ${lobby.roomCode} joined!`);
+
+            } catch (error) {
+				
+                // Display an alert if joining lobby fails
+                logError('join-lobby.click', error);
+                alert(`Failed to join lobby: ${error.message}`);
 				
                 // Re-enable the button so that the user can try again
                 $(this).prop('disabled', false);

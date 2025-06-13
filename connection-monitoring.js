@@ -733,38 +733,30 @@ class GameLobby {
     }
 	
 	// Create and set up a lobby using static async factory method
-	static async create(database, host, config) {
-		
-		// Create and set up a lobby, return the lobby instance when finished
-		try {
-			
-			// 1. Construct lobby instance
-			const lobby = new GameLobby(database, host, config);
-			
-			// 2. Generate a valid roomCode and assign it to the instance
-			lobby.roomCode = await lobby.generateValidRoomCode();
-			
-			// 3. Create the lobby in Firebase
-			await lobby.addLobby();
-			
-			// 4. Retrieve existing data for this lobby from Firebase
-			let lobbyData = await lobby.getLobbyData();
-			
-			// 5. Update the lobby instance's connection data with the Firebase data
-			lobby.connection = lobbyData.connection;
-			
-			// 6. Initialize listeners for connection/connectionStatus and connection/users
-			await lobby.initConnectionStatusListener();
-			await lobby.initUsersListener();
-			
-			// 7. Return set up lobby
-			return lobby;
-		
-		// Something went wrong creating or setting up client-side lobby
-		} catch (error) {
-			this.logError(`GameLobby >> create | error creating or setting up GameLobby: ${error.message}`);
-		}
-	}
+	static async create(database, config) {
+        try {
+            // 1. Construct lobby instance
+            const lobby = new GameLobby(database, config);
+            
+            // 2. Generate a valid roomCode and assign it
+            lobby.roomCode = await lobby.generateValidRoomCode();
+            
+            // 3. Create the lobby in Firebase
+            await lobby.addLobby();
+            
+            // 4. Listen for realtime updates (no need to fetch separately)
+            lobby.initConnectionStatusListener();
+            lobby.initUsersListener();
+            
+            // 5. Return the set up lobby
+            return lobby;
+            
+		// Throw an error if unable to create and set up the lobby
+        } catch (error) {
+            logError('GameLobby.create', error);
+            throw error;
+        }
+    }
 }
 
 // ========================================

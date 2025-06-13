@@ -770,9 +770,12 @@ $(document).ready(async function () {
 		} catch (error) {
 			console.error(`Document ready | failed to set up client: ${error.message}`);
 		}
-		
+		console.log(userSession);
+		console.log(userSession.uid);
 		$('#create-lobby').click(async function(database, userSession, lobby, config) {
 			try {
+				console.log(userSession);
+				console.log(userSession.uid);
 				// 1. Initialize lobby (for host only)
 				lobby = initializeLobbyAsHost(database, userSession, config);
 				

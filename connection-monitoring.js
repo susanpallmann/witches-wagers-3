@@ -637,6 +637,148 @@ class UserSession {
 			// getLobbyData
 			// initConnectionStatusListener
 			// initUsersListener
+// UserSession
+	// Attributes:
+		// config
+		// uid
+		// lobby
+		// verifySessionInterval
+	// Methods:
+		// logError
+		// assignLobby
+		// initVerifySessionCadence
+			// verifySession
+		// create
+			// constructor
+			// getAuthFromSignIn - used in create
+			// authStateListener - used in create
+class UserSession {
+	
+	// Reusable method for logging errors.
+	logError(error) {
+		console.error(`userSession | ${error}`);
+	}
+	
+	async verifySession() {
+		try {
+			const userExists = this.lobby.checkForUser(this.uid);
+			
+			if (!userExists) {
+				this.logError(`verifySession: user with uid (${this.uid}) was not found in lobby.`);
+				throw new Error(`verifySession: user with uid (${this.uid}) was not found in lobby.`);
+			}
+			
+			const currentTimestamp = Date.now();
+			
+			await this.lobby.updateUserAttribute(this.uid, 'lastVerified', currentTimestamp);
+				
+			return true;
+			
+		} catch (error) {
+			this.logError(`verifySession: ${error.message}`);
+			throw error;
+		}
+	}
+	
+	assignLobby(lobby) {
+		this.lobby = lobby;
+	}
+	
+	constructor(config) {
+		this.config = config;
+		this.uid;
+		this.lobby;
+		this.verifySessionInterval;
+	}
+	
+	getAuthFromSignIn() {
+		return new Promise(function (resolve, reject) {
+			const auth = getAuth();
+			signInAnonymously(auth)
+			.then(() => {
+				resolve(auth);
+			})
+			.catch((error) => {
+				reject(`getAuthFromSignIn | Firebase error: ${error.message}`);
+			});
+		});
+	}
+
+	authStateListener(auth) {
+		onAuthStateChanged(auth, (user) => {
+			if (user) {
+				// user is logged in
+			} else {
+				// use is not logged in
+			}
+		});
+	}
+	
+	initVerifySessionCadence() {
+	// Initialize verifySession cadence
+		this.verifySessionInterval = setInterval(() => {
+			this.verifySession();
+		}, this.config.ageAllowance);
+	}
+	
+	static async create(config) {
+		
+		// Create and set up user session
+		try {
+			
+			// Create userSession instance
+			const userSession = new UserSession(config);
+			
+			// Do async things for setup
+			
+			// Sign in anonymously and get an auth back
+			const auth = await userSession.getAuthFromSignIn();
+			// Assign uid to instance
+			userSession.uid = auth.currentUser.uid;
+			
+			// Initialize authStatusListener
+			userSession.authStateListener(auth);
+			
+			// Return set up userSession
+			return userSession;
+		
+		// Send an error to the console if for some reason this failed.
+		} catch (error) {
+			this.logError(`UserSession | create: error creating or setting up userSession: ${error.message}`);
+		}
+	}
+	
+	
+}
+
+// GameLobby
+	// Attributes:
+		// config
+		// database
+		// roomCode
+		// connection
+			// connectionStatus
+			// users
+				// $user
+					// isHost
+					// isVIP
+					// joinOrder
+					// lastVerified
+	// Methods:
+		// logError
+		// checkForUser
+		// createUserAttributes
+		// addUser
+		// removeUser
+		// updateUserAttribute	
+		// create
+			// constructor
+			// generateValidRoomCode
+				// generateRoomCode
+				// checkRoomCodeAvailability
+			// getLobbyData
+			// initConnectionStatusListener
+			// initUsersListener
 class GameLobby {
 	
 	createUser(uid) {
@@ -683,6 +825,16 @@ class GameLobby {
 	// Reusable method for logging errors.
 	logError(error) {
 		console.error(`GameLobby | ${error}`);
+	}
+	
+	addLobby() {
+		return new Promise((resolve, reject) => {
+			const roomRef = ref(this.database, `rooms/${this.roomCode}/connection`);
+			
+			set(roomRef, this.connection.val())
+			.then(() => resolve(true))
+			.catch((error) => reject(error));
+		});
 	}
 	
 	// Generate a roomCode (currently always returns 'TEST')
@@ -821,17 +973,20 @@ class GameLobby {
 			// 2. Generate a valid roomCode and assign it to the instance
 			lobby.roomCode = await lobby.generateValidRoomCode();
 			
-			// 3. Retrieve existing data for this lobby from Firebase
+			// 3. Create the lobby in Firebase
+			lobby.addLobby();
+			
+			// 4. Retrieve existing data for this lobby from Firebase
 			let lobbyData = await lobby.getLobbyData();
 			
-			// 4. Update the lobby instance's connection data with the Firebase data
+			// 5. Update the lobby instance's connection data with the Firebase data
 			lobby.connection = lobbyData.connection;
 			
-			// 5. Initialize listeners for connection/connectionStatus and connection/users
+			// 6. Initialize listeners for connection/connectionStatus and connection/users
 			await lobby.initConnectionStatusListener();
 			await lobby.initUsersListener();
 			
-			// 6. Return set up lobby
+			// 7. Return set up lobby
 			return lobby;
 		
 		// Something went wrong creating or setting up client-side lobby
@@ -892,15 +1047,22 @@ $(document).ready(async function () {
 			console.error(`Document ready | failed to set up client: ${error.message}`);
 		}
 		
-		// 2. Initialize lobby (for host only)
-		initializeLobbyAsHost(database, userSession, config)
+		$('#create-lobby').click(async function() {
+			try {
+				// 1. Initialize lobby (for host only)
+				initializeLobbyAsHost(database, userSession, config);
+				
+				// 2. Start verifySession cadence for the user
+				userSession.initVerifySessionCadence();
+					
+				// 3. Log both objects to the console so we can see if any of my code worked.
+				console.log(lobby);
+				console.log(userSession);
+			} catch (error) {
+				console.log(`failed to create lobby`);
+			}
+		});
 		
-		// 3. Start verifySession cadence for the user
-		userSession.initVerifySessionCadence();
-			
-		// 4. Log both objects to the console so we can see if any of my code worked.
-		console.log(lobby);
-		console.log(userSession);
 	} catch (error) {
 		console.log(`something in setup didn't work`);
 	}

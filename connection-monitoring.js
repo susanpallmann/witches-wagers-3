@@ -536,7 +536,7 @@ class GameLobby {
 		return new Promise((resolve, reject) => {
 			const userRef = ref(this.database, `rooms/${this.roomCode}/connection/users/${uid}`);
 			
-			set(userRef, user.val())
+			set(userRef, user)
 			.then(() => resolve(true))
 			.catch((error) => reject(error));
 		});
@@ -551,7 +551,7 @@ class GameLobby {
 		return new Promise((resolve, reject) => {
 			const roomRef = ref(this.database, `rooms/${this.roomCode}/connection`);
 			
-			set(roomRef, this.connection.val())
+			set(roomRef, this.connection)
 			.then(() => resolve(true))
 			.catch((error) => reject(error));
 		});
@@ -694,7 +694,7 @@ class GameLobby {
 			lobby.roomCode = await lobby.generateValidRoomCode();
 			
 			// 3. Create the lobby in Firebase
-			lobby.addLobby();
+			await lobby.addLobby();
 			
 			// 4. Retrieve existing data for this lobby from Firebase
 			let lobbyData = await lobby.getLobbyData();
@@ -772,7 +772,7 @@ $(document).ready(async function () {
 		}
 		console.log(userSession);
 		console.log(userSession.uid);
-		$('#create-lobby').click(async function(database, userSession, lobby, config) {
+		$('#create-lobby').click(async function() {
 			try {
 				console.log(userSession);
 				console.log(userSession.uid);

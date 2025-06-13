@@ -727,7 +727,7 @@ async function initializeLobbyAsHost(database, userSession, config) {
 		userSession.assignLobby(lobby);
 		
 		// 3. Check is user is already in this lobby
-		if (lobby.checkForUser(userSession.uid) {
+		if (lobby.checkForUser(userSession.uid)) {
 			// TODO, put real error here
 			console.log('this user is in the lobby already');
 		} else {
@@ -786,5 +786,4 @@ $(document).ready(async function () {
 	} catch (error) {
 		console.log(`something in setup didn't work`);
 	}
-});
 });

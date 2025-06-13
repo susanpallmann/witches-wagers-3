@@ -372,6 +372,21 @@ $(document).ready(function() {
 			// constructor
 			// getAuthFromSignIn - used in create
 			// authStateListener - used in create
+// UserSession
+	// Attributes:
+		// config
+		// uid
+		// lobby
+		// verifySessionInterval
+	// Methods:
+		// logError
+		// assignLobby
+		// initVerifySessionCadence
+			// verifySession
+		// create
+			// constructor
+			// getAuthFromSignIn - used in create
+			// authStateListener - used in create
 class UserSession {
 	
 	// Reusable method for logging errors.
@@ -767,7 +782,7 @@ $(document).ready(async function () {
 			console.error(`Document ready | failed to set up client: ${error.message}`);
 		}
 		
-		$('#create-lobby').click(async function(database, userSession, config) {
+		$('#create-lobby').click(async function(database, userSession, lobby, config) {
 			try {
 				// 1. Initialize lobby (for host only)
 				initializeLobbyAsHost(database, userSession, config);

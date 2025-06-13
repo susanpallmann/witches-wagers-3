@@ -767,7 +767,7 @@ $(document).ready(async function () {
 			console.error(`Document ready | failed to set up client: ${error.message}`);
 		}
 		
-		$('#create-lobby').click(async function() {
+		$('#create-lobby').click(async function(database, userSession, config) {
 			try {
 				// 1. Initialize lobby (for host only)
 				initializeLobbyAsHost(database, userSession, config);
@@ -779,7 +779,7 @@ $(document).ready(async function () {
 				console.log(lobby);
 				console.log(userSession);
 			} catch (error) {
-				console.log(`failed to create lobby`);
+				console.log(`failed to create lobby: ${error}`);
 			}
 		});
 		

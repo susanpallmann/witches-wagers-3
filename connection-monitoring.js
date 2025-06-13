@@ -678,7 +678,9 @@ class GameLobby {
 		this.config = config;
 		this.database = database;
 		this.roomCode;
-		this.connection = {};
+		this.connection = {
+			connectionCode: lobbySetup
+		};
 	}
 	
 	// Create and set up a lobby using static async factory method

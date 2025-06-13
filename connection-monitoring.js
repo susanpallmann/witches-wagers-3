@@ -716,7 +716,7 @@ class GameLobby {
 	}
 }
 
-async function initializeLobbyAsHost(database, userSession, lobby, config) {
+async function initializeLobbyAsHost(database, userSession, config) {
 	// Initialize lobby as host
 	try {	
 		

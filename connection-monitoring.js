@@ -250,10 +250,18 @@ class GameLobby {
         }
     }
 	
-	// Generate a roomCode (currently always returns 'TEST')
-	// Later this will have more complex logic.
+	// Generates a random 4-character uppercase alphabetical code
 	generateRoomCode() {
-		return `TEST`;
+		
+		// Vowels are excluded to reduce the change of accidentally generating a real word
+		const characters = 'BCDFGHJKLMNPQRSTVWXYZ';
+		let roomCode = '';
+		
+		// Generate a 4-character string using the allowed characters
+		for (let i = 0; i < 4; i++) {
+			roomCode += characters.charAt(Math.floor(Math.random() * characters.length));
+		}
+		return roomCode;
 	}
 	
 	// Check if the provided roomCode is in use in the database already
@@ -651,7 +659,11 @@ async function joinExistingLobby(database, userSession, config, roomCode) {
 
         // 5. Add that user to the lobby
         await lobby.addUser(newUser);
+		
+		// 6. Start the disconnection checker for the guest
+        lobby.initCheckDisconnectionCadence();
 
+		// 7. Return set up lobby once complete
         return lobby;
 
     } catch (error) {
@@ -674,7 +686,11 @@ async function initializeLobbyAsHost(database, userSession, config) {
         
         // 4. Add that user to the lobby
         await lobby.addUser(newUser);
+		
+		// 5. Start the disconnection checker for the host
+        lobby.initCheckDisconnectionCadence();
         
+		// 6. Return set up lobby once complete
         return lobby;
 		
 	// Log the error and re-throw

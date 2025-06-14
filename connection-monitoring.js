@@ -280,7 +280,7 @@ class GameLobby {
 				const timestamp = Date.now();
 				
 				if (timestamp - lobbyData.dateCreated >= this.config.lobbyAgeAllowance) {
-					
+
 					// TODO: add logic here to clean up the old lobby before reusing the code
 					await set(roomCodeRef, null);
 
@@ -291,6 +291,9 @@ class GameLobby {
 				// Return FALSE if room code cannot be used (is in use)
 				return false;
 			}
+			
+			// If a lobby with that roomCode does not exist, return TRUE
+			return true;
 			
 		// Throw an error if we were unable to determine if the roomCode is available
         } catch (error) {

@@ -1,362 +1,6 @@
 import { getDatabase, ref, get, child, set, onValue, push, update, remove } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
 import { getAuth, onAuthStateChanged, signInAnonymously} from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js';
-/*
-const ageAllowance = 60000;
-const minGuests = 2
-const maxGuests = 8;
 
-class userSession {
-	constructor(uid) {
-		this.uid = uid;
-	}
-}
-
-function isUserHost(user) {
-	console.log(user);
-	console.log(user.host);
-	return user.host;
-}
-
-function removeUsers(disconnectedUsers) {
-	const db = getDatabase();
-	const removalPromises = disconnectedUsers.map(user => {
-	return remove(ref(db, `rooms/TEST/connection/users/${user.id}`));
-	});
-	// Just return the promise that Promise.all creates
-	return Promise.all(removalPromises);
-}
-
-function writeDisconnectCode(data) {
-	return new Promise(function (resolve, reject) {
-		const { disconnectedUsers, users } = data;
-		// 1. First, check if the host is among the disconnected. This is the highest priority.
-		const isHostDisconnected = disconnectedUsers.some(user => isUserHost(users.user));
-		console.log(isHostDisconnected);
-		if (isHostDisconnected) {
-			resolve('hostDisconnected');
-			return; // Exit the function
-		} else {
-			
-		}
-
-		// 2. Next, check if removing these users would drop the lobby below the minimum required players.
-		const remainingUserCount = Object.keys(users).length - disconnectedUsers.length;
-		if (remainingUserCount < minGuests) {
-			resolve('notEnoughGuests');
-			return; // Exit the function
-		}
-		
-		// 3. If neither of the above is true, the default action is to remove the guests.
-		// We can add a sanity check here to ensure we have disconnected users to remove.
-		if (disconnectedUsers.length > 0) {
-			resolve('removeGuests');
-			return; // Exit the function
-		}
-
-		// This case should theoretically not be hit if handleDisconnectedUsers is working,
-		// but it's good practice to handle all paths.
-		reject(`writeDisconnectCode: a disconnect code should not be created for this situation; see data (${data}).`);
-	});
-}
-
-
-// Function that gets a snapshot of user data from the lobby's 'connection' child.
-function getConnectedUserData() {
-	return new Promise(function (resolve, reject) {
-		
-		// Get our database reference.
-		let db = getDatabase();
-		
-		// Take a snapshot of our lobby's 'connection' child.
-		get(ref(db, 'rooms/TEST/connection')).then((snapshot) => {
-			let users = snapshot.val().users;
-			
-			// Return the 'users' object containing all users if successful.
-			resolve(users);
-			
-		// Return a Firebase error if we are unable to get the snapshot.
-		}).catch((error) => {
-			reject(`getConnectedUserData: Firebase error: ${error}`);
-		});
-	});
-}
-
-// Function that, given a list of users, checks if any users have disconnected and returns an array of users that have disconnected. Returns an error if any users have check ins dated in the future.
-function getDisconnectedUsers(users) {
-	return new Promise(function(resolve, reject) {
-		
-		// Get the current time as a timestamp
-		let refTimestamp = Date.now();
-		
-		// Prepare an array for storing disconnected users
-		let disconnectedUsers = [];
-		
-		// Check each user in our users object
-		for (let user in users) {
-			
-			// Get the user's last verification timestamp
-			let userTimestamp = users[user].lastVerified;
-			
-			// If the user's timestamp is less than the current time minus a preset ageAllowance (the maximum amount of time a user can go without verifying to still be considered connected), add that user to the disconnectedUsers array.
-			if (userTimestamp  <= refTimestamp - ageAllowance) {
-				disconnectedUsers.push({
-					id: user, ...users[user]
-				});
-				
-			// If the user's timestamp is in the future, return an error.
-			} else if (userTimestamp  > refTimestamp) {
-				reject(`getDisconnectedUsers: userTimestamp (${userTimestamp}) exceeds refTimestamp (${refTimestamp}).`);
-			
-			// Otherwise, do not add the user to the disconnectedUsers array.
-			} else {
-			}
-		}
-		
-		// Once all users have been checked, send the users object and disconnectedUsers array (this may be empty).
-			resolve({
-				users: users,
-				disconnectedUsers : disconnectedUsers
-		});
-	});
-}
-
-function updateConnectionStatus(code) {
-	return new Promise(function (resolve, reject) {
-		const db = getDatabase();
-		update(ref(db, 'rooms/TEST/connection'), {
-		  connectionStatus: code
-		})
-		.then(() => {
-		  resolve(true);
-		})
-		.catch((error) => {
-		  reject(`updateConnectionStatus: Firebase error: ${error}`);
-		});
-
-	});
-}
-
-// Function that, given an array of disconnectedUsers, takes the appropriate action and returns TRUE if action was successfully completed. Returns an error message if not.
-function handleDisconnectedUsers(data) {
-	return new Promise(function (resolve, reject) {
-		
-		let disconnectedUsers = data.disconnectedUsers;
-		let	users = data.users;
-		
-		// If number of disconnected users is 0:
-		if (disconnectedUsers.length === 0) {
-			// then there is nothing to handle, return TRUE
-			resolve(true);
-			
-		// If the number of disconnected users is not 0 and within the expected range:
-		} else if (disconnectedUsers.length >= 1 && disconnectedUsers.length <= maxGuests + 1) {
-			
-			// Determine the appropriate disconnect code.
-			writeDisconnectCode(data)
-			.then(function (disconnectCode) {
-				
-				// If the disconnect code is 'hostDisconnected' or 'notEnoughGuests,' update the lobby's connection status.
-				if (disconnectCode === 'hostDisconnected' || disconnectCode === 'notEnoughGuests') {
-					
-					// Attempt to update the connection status for the lobby in Firebase.
-					updateConnectionStatus(disconnectCode)
-					.then(function (updateComplete) {
-						// Return TRUE once complete.
-						resolve(true);
-					})
-					// Return an error if we are not able to update the lobby connection status.
-					.catch(function (error) {
-						reject(`handleDisconnectedUsers: error setting lobby connection status to disconnectCode (${disconnectCode}). Firebase error: ${error}.`);
-					});
-				// If the disconnect code is 'removeUsers':
-				} else if (disconnectCode === 'removeGuests') {
-					
-					// Run removeUsers, passing in the disconnectedUsers array.
-					removeUsers(disconnectedUsers)
-					
-					// Once the above is complete, return TRUE.
-					.then(function (updateComplete) {
-						resolve(true);
-					})
-					// If the above fails, return the error passed back from removeUsers.
-					.catch(function (error) {
-						reject(error);
-					});
-				// If the disconnectCode is neither of the above, it is unrecognized and we return an error.
-				} else {
-					reject(`handleDisconnectedUsers: disconnectCode (${disconnectCode}) is not recognized.`);
-				}
-			});
-		// Return an error if the number of disconnected users exceeds the range of what is possible for a lobby based on external variable maxGuests.
-		} else {
-			reject(`handleDisconnectedUsers: length of disconnectedUsers (${disconnectedUsers.length}) is outside of expected range (${maxGuests}).`);
-		}
-	});
-}
-
-function checkForDisconnects() {
-	getConnectedUserData()
-	.then(function (responseTimes) {
-		return getDisconnectedUsers(responseTimes);
-	})
-	.then(function (data) {
-		return handleDisconnectedUsers(data);
-	})
-	.catch(error => {
-		console.log(error);
-	});
-}
-
-function verifyUser(uid, roomcode) {
-	checkForUser(uid, roomcode)
-	.then((userExists) => {
-		if (userExists) {
-			const db = getDatabase();
-			let timestamp = Date.now();
-			update(ref(db, `rooms/TEST/connection/users/${uid}`), {
-				lastVerified: timestamp
-			});
-		} else {
-		}
-	})
-	.catch((error) => {
-		console.log(error);
-	});
-}
-
-function anonSignIn () {
-	return new Promise(function (resolve, reject) {
-		const auth = getAuth();
-		
-		signInAnonymously(auth)
-		.then(() => {
-			resolve(auth);
-		}).catch((error) => {
-			reject(`anonSignIn: Firebase error: ${error}`);
-		});		
-	});
-}
-
-function getNumUsers(roomcode) {
-	return new Promise(function (resolve, reject) {
-		const db = getDatabase();
-		get(ref(db, `rooms/${roomcode}/connection`)).then((snapshot) => {
-			let users = snapshot.val().users;
-			let numUsers = 0;
-			if (users) {
-				numUsers = Object.keys(users).length;
-			} else {
-			}
-			resolve(numUsers);
-		})
-		.catch((error) => {
-			reject(`getNumUsers: Firebase error: ${error}`);
-		});
-	});
-}
-
-function checkForUser(uid, roomcode) {
-	return new Promise(function (resolve, reject) {
-		const db = getDatabase();
-		get(ref(db, `rooms/${roomcode}/connection/users/${uid}`))
-		.then((snapshot) => {
-			if (snapshot.exists()) {
-				resolve(true);
-			} else {
-				resolve(false);
-			}
-		})
-		.catch((error) => {
-			reject(`getNumUsers: Firebase error: ${error}`);
-		});
-	});
-}
-
-function joinRoom(uid, roomcode) {
-	const db = getDatabase();
-	let updates = {};
-	let timestamp = Date.now();
-	let joinOrder;
-	getNumUsers(roomcode)
-	.then((numUsers) => {
-		joinOrder = numUsers;
-		if (joinOrder <= maxGuests && joinOrder >= 0) {
-			checkForUser(uid, roomcode)
-			.then((userExists) => {
-				if (userExists) {
-					// Don't join if user is already present in room
-				} else {
-					let isHost = false;
-					if (joinOrder === 0) {
-						isHost = true;
-					}
-					updates[uid] = {
-						lastVerified: timestamp,
-						isHost: isHost,
-						joinOrder: joinOrder
-					};
-					update(ref(db, `rooms/${roomcode}/connection/users`), updates).then(() => {
-					})
-					.catch((error) => {
-						console.log(`joinRoom: Firebase error: ${error}`);
-					});
-				}
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-		} else if (joinOrder > maxGuests) {
-			// Lobby is full (TODO)
-		} else {
-			console.log(`joinRoom: Unexpected value for JoinOrder (${joinOrder}).`);
-		}
-	})
-	.catch((error) => {
-		console.log(`joinRoom: Firebase error: ${error}`);
-	});
-}
-
-function connectionCodeListener() {
-	const db = getDatabase();
-	const connectionCodeRef = ref(db, 'rooms/TEST/connection/connectionStatus');
-	onValue(connectionCodeRef, (snapshot) => {
-	let connectionCode = snapshot.val();
-	console.log(`connectionCodeListener: connection status changed to '${connectionCode}'`);
-	});
-}
-
-$(document).ready(function() {
-	let currentUserSession;
-	let verificationInterval;
-	let checkInterval;
-	
-	anonSignIn()
-	.then((auth) => {
-		onAuthStateChanged(auth, (user) => {
-			if (user) {
-				let constructorUid = user.uid;
-				currentUserSession = new userSession(constructorUid);
-				let uid = currentUserSession.uid;
-				joinRoom(uid, 'TEST');
-				connectionCodeListener();
-				verificationInterval = setInterval(function() {
-					verifyUser(currentUserSession.uid, 'TEST');
-				}, ageAllowance);
-				checkInterval = setInterval(function() {
-					checkForDisconnects();
-				}, ageAllowance*2);
-			} else {
-				console.log(`$(document).ready: user is signed out.`);
-				clearInterval(verificationInterval);
-				clearInterval(checkInterval);
-			}
-		});
-	})
-	.catch(error => {
-		console.log(error);
-	});
-});
-*/
 // ========================================
 // ** FUNCTION: Error handling **
 // ========================================
@@ -373,7 +17,7 @@ function logError(context, error) {
 class UserSession {
 	// Attributes: config, uid, lobby, verifySessionInterval
 	
-	constructor(config, username) {
+	constructor(config) {
 		this.config = config;
 		this.uid;
 		this.username;
@@ -460,7 +104,7 @@ class UserSession {
 			this.verifySession().catch(error => {
 				
 				// If an error occurs, clear the interval
-				logError(`UserSession.verifySessionCadence`, new Error(`Periodic verification failed: ${error.message}`));
+				logError(`UserSession.initVerifySessionCadence`, new Error(`Periodic verification failed: ${error.message}`));
 				clearInterval(this.verifySessionInterval);
 			});
 			
@@ -510,6 +154,7 @@ class GameLobby {
 			connectionStatus: 'lobbySetup',
 			users: {}
 		};
+		this.checkDisconnectionInterval;
 	}
 	
 	// Create a user object with appropriate attributes based on how many users have already joined the lobby
@@ -619,10 +264,25 @@ class GameLobby {
             const roomCodeRef = ref(this.database, `rooms/${roomCode}`);
             const snapshot = await get(roomCodeRef);
 			
-            // TODO: Add logic to check lobby age
-			
-			// Returns TRUE if roomCode is available, and FALSE if the roomCode is not
-            return !snapshot.exists();
+			// If a lobby with that roomCode exists, check if it is stale			
+            if (snapshot.exists()) {
+				
+				// Set up variables for lobby data and the current timestamp
+				const lobbyData = snapshot.val();
+				const timestamp = Date.now();
+				
+				if (timestamp - lobbyData.dateCreated >= this.config.lobbyAgeAllowance) {
+					
+					// TODO: add logic here to clean up the old lobby before reusing the code
+					await set(roomCodeRef, null);
+
+					// Return TRUE if room code can be used (is sufficiently old)
+					return true;
+				}
+				
+				// Return FALSE if room code cannot be used (is in use)
+				return false;
+			}
 			
 		// Throw an error if we were unable to determine if the roomCode is available
         } catch (error) {
@@ -701,6 +361,65 @@ class GameLobby {
         }
     }
 	
+	// Checks if any of the provided user uids are the VIP, and reassigns it to the next best user based on joinOrder if necessary
+	async reassignVipIfNecessary(disconnectedUserIds) {
+        try {
+            // 1. Find the current VIP among the *active* users before any removals
+            const currentVipUid = Object.keys(this.connection.users).find(
+                uid => this.connection.users[uid].isVIP
+            );
+
+            // 2. If there is no current VIP, or the current VIP is not among the disconnected users, no reassignments are strictly needed by this function for VIP. (A new VIP will be assigned when a new user joins if no VIP exists).
+            if (!currentVipUid || !disconnectedUserIds.includes(currentVipUid)) {
+                return true;
+            }
+
+            // 3. Get all current users in the lobby, excluding the disconnected users and hosts, sorted by join order
+            const remainingUsers = Object.entries(this.connection.users)
+                .filter(([uid, user]) => !disconnectedUserIds.includes(uid) && !user.isHost)
+                .sort(([, userA], [, userB]) => userA.joinOrder - userB.joinOrder);
+
+            // 4. If there are no other non-host users, the VIP cannot be reassigned, return FALSE
+            if (remainingUsers.length === 0) {
+                return false;
+            }
+
+            // 5. The next VIP is the user with the lowest joinOrder among the remaining non-host users
+            const [nextVipUid, nextVipUser] = remainingUsers[0];
+
+            // 6. Reassign VIP status in the database
+            await this.updateUserAttribute(nextVipUid, 'isVIP', true);
+
+			// Return TRUE once handled successfully
+            return true;
+
+		// Indicate failure to reassign VIP
+        } catch (error) {
+            logError('GameLobby.reassignVipIfNecessary', error);
+			throw error;
+        }
+    } 
+	
+	// Check if user has either attribute or value for attribute
+	// Returns TRUE if attribute or value is found, and FALSE if not
+	checkForUserAttribute(uid, attribute, value) {
+		
+		// Check if the user exists
+		const user = this.connection.users?.[uid];
+		
+		// User or attribute not found/provided
+		if (!user || !attribute) {
+			return false; 
+		}
+		
+		// Check for the given attribute and value
+		const attributeValue = user[attribute];
+		
+		// If a value was provided as a parameter, return a boolean for if it matches the attributeValue
+		// If a value was not provided, return a boolean for it the attribute exists
+		return value ? (attributeValue === value) : (attributeValue !== undefined);
+	}
+	
 	// Check if user exists in lobby
 	// Returns TRUE if user is found, and FALSE if not
 	checkForUser(uid) {
@@ -731,8 +450,151 @@ class GameLobby {
         }
     }
 	
+	// Check users' lastVerified timestamps to indentify users that have disconnected, then handle what to do based on who and how many users disconnected
+	async handleDisconnection() {
+		
+		// 1. Set up variables
+        const now = Date.now();
+        const users = this.connection.users || {};
+        const allUserIds = Object.keys(users);
+        const disconnectedUserIds = [];
+        let hostId = null;
+		
+		// 2. For each uid, get the user object
+        for (const uid in users) {
+            const user = users[uid];
+			
+			// A. Make note if the current user is the host
+            if (user.isHost) {
+                hostId = uid;
+            }
+			
+			// B. If this user's lastVerified was not recent enough based on the config ageAllowance:
+            if (user.lastVerified <= now - this.config.ageAllowance) {
+				
+				// Add the user to our disconnectedUserIds array
+                disconnectedUserIds.push(uid);
+            }
+        }
+
+        // 3. If no one disconnected, return TRUE as there is nothing to handle
+        if (disconnectedUserIds.length === 0) {
+            return true;
+        }
+		
+        // 4. If one or more users disconnected, proceed to handle the situation as appropriate:
+        try {
+			
+            // A. Check for game-ending conditions (host disconnected or not enough players)
+            const hostDisconnected = hostId && disconnectedUserIds.includes(hostId);
+            const remainingUserCount = allUserIds.length - disconnectedUserIds.length;
+
+			// B. If the host disconnected:
+            if (hostDisconnected) {
+				
+				// i. Send an updated connectionStatus to the database
+                await this.updateConnectionStatus('hostDisconnected');
+				
+				// ii. Remove all players regardless of how recently they were verified as the game cannot continue
+                await this.removeUsers(allUserIds);
+				
+				// iii. Return TRUE once handled
+                return true;
+            }
+
+            // C. If there are not enough guests to continue (excluding the host):
+            if (remainingUserCount - 1 < this.config.minGuests) {
+				
+				// i. Send an updated connectionStatus to the database
+                await this.updateConnectionStatus('notEnoughGuests');
+				
+				// ii. Remove all players regardless of how recently they were verified as the game cannot continue
+                await this.removeUsers(allUserIds);
+				
+				// iii. Return TRUE once handled
+                return true;
+            }
+
+            // D. If the game continues, reassign VIP if necessary
+            await this.reassignVipIfNecessary(disconnectedUserIds[0]); // Check the first disconnected user
+           
+            // E. Remove only the disconnected users, as the game can continue
+            await this.removeUsers(disconnectedUserIds);
+           
+            return true;
+
+		// Throw an error if unable to handle disconnection
+        } catch (error) {
+            logError('GameLobby.handleDisconnection', error);
+            throw error;
+        }
+    }
+	
+	// Start a periodic cadence of verifying that all users are still connected via handleDisconnection
+	initCheckDisconnectionCadence() {
+		
+		// Set an interval on the lobby checkDisconnectionInterval attribute
+		this.checkDisconnectionInterval = setInterval(() => {
+			
+			// Run handleDisconnection each interval
+			this.handleDisconnection().catch(error => {
+				
+				// If an error occurs, clear the interval
+				logError(`GameLobby.initCheckDisconnectionCadence`, new Error(`Periodic verification failed: ${error.message}`));
+				clearInterval(this.checkDisconnectionInterval);
+			});
+			
+		// Interval timing is pulled from config's ageAllowance attribute
+		}, this.config.ageAllowance*1.5);
+	}
+	
+	// Updates the lobby's connectionStatus in the database
+	// Returns TRUE if successful
+    async updateConnectionStatus(newStatus) {
+        try {
+			
+			// Attempt to set the lobby's connectionStatus to a new value as provided
+            const statusRef = ref(this.database, `rooms/${this.roomCode}/connection/connectionStatus`);
+            await set(statusRef, newStatus);
+			
+			// Return TRUE if successful
+            return true;
+			
+		// Throw an error if unsuccessful
+        } catch (error) {
+            logError('GameLobby.updateConnectionStatus', error);
+            throw error;
+        }
+    }
+	
+	// Attempts to remove multiple users
+	async removeUsers(usersToRemove) {
+		
+        // If there are no users to remove, exit early
+        if (!usersToRemove || usersToRemove.length === 0) {
+            return true;
+        }
+        
+        try {
+            // Create an object for a multi-path update
+            const updates = {};
+            usersToRemove.forEach(uid => {
+                updates[`rooms/${this.roomCode}/connection/users/${uid}`] = null; // Setting a path to null in an update call deletes the data at that path
+            });
+           
+            // Perform the atomic update
+            await update(ref(this.database), updates);
+           
+            return true;
+           
+        } catch (error) {
+            logError('GameLobby.removeUsers', error);
+            throw error;
+        }
+    }
+	
 	// Create and set up a lobby using static async factory method
-	static async create(database, config, roomCode) {
+	static async create(database, config, roomCode, initialData = null) {
         try {
             // 1. Construct lobby instance
             const lobby = new GameLobby(database, config);
@@ -744,7 +606,7 @@ class GameLobby {
 			if (!roomCode) {
 				await lobby.addLobby();
 			} else {
-				const currentLobbyData = await lobby.getLobbyData();
+				const currentLobbyData = initialData ? initialData : await lobby.getLobbyData();
                 lobby.connection = currentLobbyData.connection || { connectionStatus: 'lobbySetup', users: {} };
 				lobby.connection.users = lobby.connection.users || {};
 			}
@@ -779,7 +641,7 @@ async function joinExistingLobby(database, userSession, config, roomCode) {
         }
 
         // 2. Initialize client-side lobby with the provided roomCode
-        const lobby = await GameLobby.create(database, config, roomCode);
+        const lobby = await GameLobby.create(database, config, roomCode, snapshot.val());
 
         // 3. Assign the created lobby to the userSession
         userSession.assignLobby(lobby);
@@ -827,7 +689,8 @@ $(document).ready(async function() {
     const config = {
         ageAllowance: 60000,
         minGuests: 2,
-        maxGuests: 8
+        maxGuests: 8,
+		lobbyAgeAllowance: 12 * 60 * 60 * 1000 // 12 hours
     };
     let database;
     let userSession;

@@ -516,7 +516,7 @@ class GameLobby {
             }
 
             // D. If the game continues, reassign VIP if necessary
-            await this.reassignVipIfNecessary(disconnectedUserIds[0]); // Check the first disconnected user
+            await this.reassignVipIfNecessary(disconnectedUserIds);
            
             // E. Remove only the disconnected users, as the game can continue
             await this.removeUsers(disconnectedUserIds);
